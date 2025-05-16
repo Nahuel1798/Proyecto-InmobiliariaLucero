@@ -1,0 +1,21 @@
+@model List<Contrato>
+@{
+    var inmueble = ViewBag.Inmueble as Inmueble;
+}
+<h2>Contratos del Inmueble: @inmueble.Direccion</h2>
+
+<table class="table">
+    <thead>
+        <tr><th>Inquilino</th><th>Desde</th><th>Hasta</th></tr>
+    </thead>
+    <tbody>
+    @foreach (var c in Model)
+    {
+        <tr>
+            <td>@c.Inquilino.NombreCompleto</td>
+            <td>@c.FechaInicio.ToShortDateString()</td>
+            <td>@(c.FechaTerminacionAnticipada?.ToShortDateString() ?? c.FechaFin.ToShortDateString())</td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,26 @@
+@model Usuario
+
+<h2>Editar usuario</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div>
+        <label>Email</label>
+        <input asp-for="Email" class="form-control" />
+    </div>
+
+    <div>
+        <label>Clave</label>
+        <input asp-for="Clave" class="form-control" />
+    </div>
+
+    <div>
+        <label>Rol</label>
+        <select asp-for="Rol" class="form-control">
+            <option>Administrador</option>
+            <option>Empleado</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Guardar</button>
+</form>

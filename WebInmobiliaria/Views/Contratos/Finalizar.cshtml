@@ -1,0 +1,13 @@
+@model Contrato
+<h2>Finalizar contrato</h2>
+<p>¿Seguro que desea finalizar el contrato del inmueble <strong>@Model.Inmueble.Direccion</strong>?</p>
+<p>Multa calculada: <strong>$@ViewBag.Multa</strong></p>
+@if (ViewBag.MesesAdeudados)
+{
+    <p class="text-danger">El inquilino tiene meses adeudados.</p>
+}
+<form asp-action="ConfirmarFinalizacion" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button class="btn btn-danger" type="submit">Finalizar ahora</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

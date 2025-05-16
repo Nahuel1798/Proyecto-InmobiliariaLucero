@@ -2,48 +2,130 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WebInmobiliaria</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/WebInmobiliaria.styles.css" asp-append-version="true" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewBag.Title</title>
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/main.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    @RenderSection("Styles", false)
 </head>
-<body>
+<body onload="init()">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebInmobiliaria</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+        <nav class="site-header fixed-top py-1 bg-light border-bottom">
+            <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <a class="py-2" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-house"></i> Inicio</a>
+                    <a class="py-2 d-none d-md-inline-block" asp-controller="Usuarios" asp-action="Login"><i class="fa-solid fa-right-to-bracket"></i> Acceder</a>
+                }
+                else
+                {
+                    <div class="dropdown">
+                        <a class="btn btn-primary dropdown-toggle text-light" href="#" role="button" id="homeMenu" data-bs-toggle="dropdown" aria-expanded="false" data-bs-display="static">
+                            <i class="fa-solid fa-house"></i> Inicio
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="homeMenu">
+                            <li><a class="dropdown-item text-dark" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-house"></i> Inicio</a></li>
+                            <li><a class="dropdown-item text-dark" asp-controller="Home" asp-action="Seguro"><i class="fa-solid fa-id-card"></i> Claims</a></li>
+                            <li>
+                                <a class="dropdown-item text-dark" asp-controller="Home" asp-action="Fecha" 
+                                   asp-route-anio="@DateTime.Today.Year" asp-route-mes="@DateTime.Today.Month" asp-route-dia="@DateTime.Today.Day">
+                                   <i class="fa-solid fa-calendar-check"></i> Fecha
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    @if (User.IsInRole("Administrador") || User.IsInRole("SuperAdministrador"))
+                    {
+                        <a class="py-2 d-none d-md-inline-block" asp-controller="Usuarios" asp-action="Index"><i class="fa-solid fa-user"></i> Usuarios</a>
+                    }
+                    <a class="py-2 d-none d-md-inline-block" asp-controller="Propietarios" asp-action="Index"><i class="fa-solid fa-person"></i> Propietarios</a>
+                    <a class="py-2 d-none d-md-inline-block" asp-controller="Inmuebles" asp-action="Index"><i class="fa-solid fa-building"></i> Inmuebles</a>
+                    <a class="py-2 d-none d-md-inline-block" asp-controller="Alquileres" asp-action="Index"><i class="fa-solid fa-file-contract"></i> Alquileres</a>
+
+                    <div class="dropdown">
+                        <a class="btn btn-primary dropdown-toggle text-light" href="#" role="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false" data-bs-display="static">
+                            <i class="fa-solid fa-user"></i> @User.Identity.Name
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="userMenu">
+                            <li><a class="dropdown-item text-dark" asp-controller="Usuarios" asp-action="Perfil"><i class="fa-solid fa-user"></i> Perfil</a></li>
+                            <li><a class="dropdown-item text-dark" asp-controller="Usuarios" asp-action="Logout"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
+                        </ul>
+                    </div>
+                }
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
+    <main role="main" class="container pt-5 mt-3">
+        <div class="m-1 p-1">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="footer mt-auto py-3 bg-light border-top">
         <div class="container">
-            &copy; 2025 - WebInmobiliaria - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <span class="text-muted">&copy; @DateTime.Today.Year Universidad de La Punta &middot; 
+                <a href="https://github.com/marianoluzza/inmobiliariaULP" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i> Repo</a> &middot; 
+                <a href="https://docs.google.com/document/d/1VqhEIR3T5QwZG2N371M-0fIUqPdmDdNy9AQ06D7zxfo" target="_blank" rel="noopener noreferrer">Narrativa</a> 
+                <a class="float-end" href="#">Volver arriba</a>
+            </span>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.7.16/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
+    <script type="text/javascript">
+        const notyf = new Notyf({
+            duration: 2500,
+            types: [
+                {
+                    type: 'info',
+                    background: '#004085',
+                    icon: {
+                        className: 'fa-solid fa-circle-info',
+                        tagName: 'i',
+                        color: 'white'
+                    }
+                }
+            ]
+        });
+
+        function init() {
+            let error = "@(ViewBag.Error ?? "")";
+            let mensaje = "@(ViewBag.Mensaje ?? "")";
+            let id = +"@(ViewBag.Id ?? 0)";
+            notyf.info = function(mensaje) {
+                notyf.open({
+                    type: 'info',
+                    message: mensaje,
+                });
+            }
+            if (error) {
+                notyf.error(error);
+            }
+            if (mensaje) {
+                notyf.info(mensaje);
+            }
+            if (id) {
+                notyf.success(`La entidad fue dada de alta con id: ${id}`);
+            }
+        }
+
+        // ... (otras funciones que tengas en tu layout, ejemplo modalLogin, buscarPropietarios, etc.) ...
+    </script>
+
+    @await Html.PartialAsync("_ScriptsPartial")
+    @RenderSection("Scripts", false)
 </body>
 </html>

@@ -1,0 +1,25 @@
+@model Usuario
+
+<h2>Crear usuario</h2>
+
+<form asp-action="Create" method="post">
+    <div>
+        <label>Email</label>
+        <input asp-for="Email" class="form-control" />
+    </div>
+
+    <div>
+        <label>Clave</label>
+        <input asp-for="Clave" type="password" class="form-control" />
+    </div>
+
+    <div>
+        <label>Rol</label>
+        <select asp-for="Rol" class="form-control">
+            <option>Administrador</option>
+            <option>Empleado</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-2">Crear</button>
+</form>

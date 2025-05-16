@@ -1,0 +1,65 @@
+@model IEnumerable<Contrato>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Crear nuevo</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaInicio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaFin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MontoMensual)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Inquilino)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Inmueble)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaTerminacionAnticipada)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaInicio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaFin)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MontoMensual)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Inquilino.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Inmueble.Direccion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaTerminacionAnticipada)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Borrar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
