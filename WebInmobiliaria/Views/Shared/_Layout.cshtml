@@ -42,13 +42,14 @@
                         </ul>
                     </div>
 
-                    @if (User.IsInRole("Administrador") || User.IsInRole("SuperAdministrador"))
+                    @if (User.IsInRole("Administrador"))
                     {
                         <a class="py-2 d-none d-md-inline-block" asp-controller="Usuarios" asp-action="Index"><i class="fa-solid fa-user"></i> Usuarios</a>
                     }
                     <a class="py-2 d-none d-md-inline-block" asp-controller="Propietarios" asp-action="Index"><i class="fa-solid fa-person"></i> Propietarios</a>
+                    <a class="py-2 d-none d-md-inline-block" asp-controller="Inquilinos" asp-action="Index"><i class="fa-solid fa-person"></i> Inquilinos</a>
                     <a class="py-2 d-none d-md-inline-block" asp-controller="Inmuebles" asp-action="Index"><i class="fa-solid fa-building"></i> Inmuebles</a>
-                    <a class="py-2 d-none d-md-inline-block" asp-controller="Alquileres" asp-action="Index"><i class="fa-solid fa-file-contract"></i> Alquileres</a>
+                    <a class="py-2 d-none d-md-inline-block" asp-controller="Contratos" asp-action="Index"><i class="fa-solid fa-file-contract"></i> Alquileres</a>
 
                     <div class="dropdown">
                         <a class="btn btn-primary dropdown-toggle text-light" href="#" role="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false" data-bs-display="static">

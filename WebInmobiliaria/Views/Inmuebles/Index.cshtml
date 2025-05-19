@@ -7,10 +7,10 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Crear nuevo</a>
+    <a asp-action="Create" class="btn btn-primary mb-2" >Crear nuevo</a>
 </p>
-<table class="table">
-    <thead>
+<table class="table table-striped">
+    <thead class="table-dark">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Direccion)
@@ -19,7 +19,7 @@
                 @Html.DisplayNameFor(model => model.Uso)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Tipo)
+                @Html.DisplayNameFor(model => model.TipoInmueble)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Ambientes)
@@ -52,7 +52,7 @@
                 @Html.DisplayFor(modelItem => item.Uso)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Tipo)
+                @Html.DisplayFor(modelItem => item.TipoInmueble)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Ambientes)
@@ -73,9 +73,9 @@
                 @Html.DisplayFor(modelItem => item.Propietario.Id)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Borrar</a>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Editar</a>
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Detalles</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Eliminar</a>
             </td>
         </tr>
 }

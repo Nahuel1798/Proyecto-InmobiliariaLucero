@@ -18,15 +18,23 @@
                 <span asp-validation-for="Direccion" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Uso" class="control-label"></label>
-                <input asp-for="Uso" class="form-control" />
-                <span asp-validation-for="Uso" class="text-danger"></span>
+            <label asp-for="Uso" class="control-label"></label>
+            <select asp-for="Uso" class="form-control">
+                <option value="">Seleccione un uso</option>
+                <option value="Residencial">Residencial</option>
+                <option value="Comercial">Comercial</option>
+            </select>
+            <span asp-validation-for="Uso" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Tipo" class="control-label"></label>
-                <input asp-for="Tipo" class="form-control" />
-                <span asp-validation-for="Tipo" class="text-danger"></span>
+                <label asp-for="TipoInmuebleId" class="control-label"></label>
+                <select asp-for="TipoInmuebleId" class="form-select" asp-items="ViewBag.TipoInmuebleId">
+                    <option value="">Seleccione un tipo de mueble</option>
+                </select>
+                <span asp-validation-for="TipoInmuebleId" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Ambientes" class="control-label"></label>
                 <input asp-for="Ambientes" class="form-control" />
@@ -52,11 +60,15 @@
                     <input class="form-check-input" asp-for="Estado" /> @Html.DisplayNameFor(model => model.Estado)
                 </label>
             </div>
+
             <div class="form-group">
                 <label asp-for="PropietarioId" class="control-label"></label>
-                <select asp-for="PropietarioId" class ="form-control" asp-items="ViewBag.PropietarioId"></select>
+                <select asp-for="PropietarioId" class="form-select" asp-items="ViewBag.PropietarioId">
+                    <option value="">Seleccione un tipo de mueble</option>
+                </select>
                 <span asp-validation-for="PropietarioId" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

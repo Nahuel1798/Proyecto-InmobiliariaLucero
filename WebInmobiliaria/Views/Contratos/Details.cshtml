@@ -1,6 +1,6 @@
 @model Contrato
 
-@{
+@* @{
     ViewData["Title"] = "Details";
 }
 
@@ -51,4 +51,41 @@
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a> |
     <a asp-action="Index">Volver</a>
+</div> *@
+
+@{
+    ViewData["Title"] = "Detalles del Contrato";
+}
+
+<h1 class="mb-4">Detalles del Contrato</h1>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Inquilino</dt>
+            <dd class="col-sm-9">@Model.Inquilino?.NombreCompleto</dd>
+
+            <dt class="col-sm-3">Inmueble</dt>
+            <dd class="col-sm-9">@Model.Inmueble?.Direccion</dd>
+
+            <dt class="col-sm-3">Fecha Inicio</dt>
+            <dd class="col-sm-9">@Model.FechaInicio.ToShortDateString()</dd>
+
+            <dt class="col-sm-3">Fecha Fin</dt>
+            <dd class="col-sm-9">@Model.FechaFin.ToShortDateString()</dd>
+
+            <dt class="col-sm-3">Monto Mensual</dt>
+            <dd class="col-sm-9">@Model.MontoMensual.ToString("C")</dd>
+
+            @if (Model.FechaTerminacionAnticipada != null)
+            {
+                <dt class="col-sm-3">Terminación Anticipada</dt>
+                <dd class="col-sm-9">@Model.FechaTerminacionAnticipada?.ToShortDateString()</dd>
+
+                <dt class="col-sm-3">Multa</dt>
+                <dd class="col-sm-9">@Model.MontoMulta?.ToString("C")</dd>
+            }
+        </dl>
+        <a asp-action="Index" class="btn btn-secondary">Volver</a>
+    </div>
 </div>

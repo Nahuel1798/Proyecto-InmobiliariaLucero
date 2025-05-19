@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\Webinmobiliaria\\WebInmobiliaria.csproj": {}
+    "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\WebInmobiliaria.csproj": {}
   },
   "projects": {
-    "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\Webinmobiliaria\\WebInmobiliaria.csproj": {
+    "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\WebInmobiliaria.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\Webinmobiliaria\\WebInmobiliaria.csproj",
+        "projectUniqueName": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\WebInmobiliaria.csproj",
         "projectName": "WebInmobiliaria",
-        "projectPath": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\Webinmobiliaria\\WebInmobiliaria.csproj",
+        "projectPath": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\WebInmobiliaria.csproj",
         "packagesPath": "C:\\Users\\Nahuel\\.nuget\\packages\\",
-        "outputPath": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\Webinmobiliaria\\obj\\",
+        "outputPath": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Nahuel\\AppData\\Roaming\\NuGet\\NuGet.Config"

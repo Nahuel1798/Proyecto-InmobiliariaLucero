@@ -1,5 +1,5 @@
 @model List<Contrato>
-<h2>Contratos Vigentes</h2>
+@* <h2>Contratos Vigentes</h2>
 
 <table class="table">
     <thead>
@@ -21,4 +21,40 @@
         </tr>
     }
     </tbody>
-</table>
+</table> *@
+@{
+    ViewData["Title"] = "Contratos Vigentes";
+}
+
+<h1 class="mb-4">Contratos Vigentes</h1>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No hay contratos vigentes.</div>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Inquilino</th>
+                <th>Inmueble</th>
+                <th>Desde</th>
+                <th>Hasta</th>
+                <th>Monto</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Inquilino?.NombreCompleto</td>
+                <td>@item.Inmueble?.Direccion</td>
+                <td>@item.FechaInicio.ToShortDateString()</td>
+                <td>@item.FechaFin.ToShortDateString()</td>
+                <td>@item.MontoMensual.ToString("C")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

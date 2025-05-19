@@ -3,8 +3,8 @@
 <h2>Usuarios</h2>
 <a asp-action="Create" class="btn btn-primary mb-2">Nuevo usuario</a>
 
-<table class="table">
-    <thead>
+<table class="table table-striped">
+    <thead class="table-dark">
         <tr>
             <th>Email</th>
             <th>Rol</th>
@@ -25,8 +25,8 @@
                 }
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@u.Id">Editar</a> |
-                <a asp-action="Delete" asp-route-id="@u.Id">Eliminar</a>
+                <a asp-action="Edit" asp-route-id="@u.Id" class="btn btn-sm btn-primary">Editar</a> |
+                <a asp-action="Delete" asp-route-id="@u.Id" class="btn btn-sm btn-danger">Eliminar</a>
             </td>
         </tr>
     }

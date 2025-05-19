@@ -1,65 +1,41 @@
 @model IEnumerable<Contrato>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Contratos";
 }
 
-<h1>Index</h1>
+<h1 class="mb-4">Lista de Contratos</h1>
 
 <p>
-    <a asp-action="Create">Crear nuevo</a>
+    <a asp-action="Create" class="btn btn-primary mb-2">Nuevo Contrato</a>
 </p>
-<table class="table">
-    <thead>
+
+<table class="table table-striped">
+    <thead class="table-dark">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaInicio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaFin)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MontoMensual)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Inquilino)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Inmueble)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaTerminacionAnticipada)
-            </th>
+            <th>Inquilino</th>
+            <th>Inmueble</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Fin</th>
+            <th>Mensualidad</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>@item.Inquilino?.NombreCompleto</td>
+            <td>@item.Inmueble?.Direccion</td>
+            <td>@item.FechaInicio.ToShortDateString()</td>
+            <td>@item.FechaFin.ToShortDateString()</td>
+            <td>@item.MontoMensual.ToString("C")</td>
             <td>
-                @Html.DisplayFor(modelItem => item.FechaInicio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaFin)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MontoMensual)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Inquilino.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Inmueble.Direccion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaTerminacionAnticipada)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Borrar</a>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Editar</a>
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Detalles</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Eliminar</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+

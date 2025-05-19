@@ -35,7 +35,7 @@ public class UsuariosController : Controller
     {
         var usuario = context.Usuarios.FirstOrDefault(u => u.Email == email);
 
-        if (usuario != null && usuario.Clave == clave) // ⚠️ usar hash en producción
+        if (usuario != null && usuario.Clave == clave) // ⚠️ usar hash
         {
             var claims = new List<Claim>
             {

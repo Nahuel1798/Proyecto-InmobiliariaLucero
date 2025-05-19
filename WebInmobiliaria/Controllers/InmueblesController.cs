@@ -60,6 +60,16 @@ namespace Inmobiliaria.Controllers
                 "Value", "Text", inmueble?.PropietarioId
             );
 
+            ViewData["TipoInmuebleId"] = new SelectList(
+                _context.TipoInmueble
+                    .Select(t => new SelectListItem
+                    {
+                        Value = t.Id.ToString(),
+                        Text = t.Descripcion
+                    }).ToList(),
+                "Value", "Text"
+            );
+
             return View();
         }
 
@@ -68,7 +78,7 @@ namespace Inmobiliaria.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Direccion,Uso,Tipo,Ambientes,Latitud,Longitud,Precio,Estado,PropietarioId")] Inmueble inmueble)
+        public async Task<IActionResult> Create([Bind("Id,Direccion,Uso,TipoInmuebleId,Ambientes,Latitud,Longitud,Precio,Estado,PropietarioId")] Inmueble inmueble)
         {
             if (ModelState.IsValid)
             {
@@ -84,6 +94,15 @@ namespace Inmobiliaria.Controllers
                         Text = p.Nombre + " " + p.Apellido
                     }).ToList(),
                 "Value", "Text", inmueble?.PropietarioId
+            );
+            ViewData["TipoInmuebleId"] = new SelectList(
+                _context.TipoInmueble
+                    .Select(t => new SelectListItem
+                    {
+                        Value = t.Id.ToString(),
+                        Text = t.Descripcion
+                    }).ToList(),
+                "Value", "Text", inmueble?.TipoInmuebleId
             );
             return View(inmueble);
         }
@@ -161,6 +180,25 @@ namespace Inmobiliaria.Controllers
             return View(inmueble);
         }
 
+        [Authorize]
+        public async Task<IActionResult> PorPropietario(int id)
+        {
+            var propietario = await _context.Propietarios.FindAsync(id);
+            if (propietario == null)
+            {
+                return NotFound();
+            }
+
+            var inmuebles = await _context.Inmuebles
+                .Include(i => i.Propietario)
+                .Where(i => i.PropietarioId == id)
+                .ToListAsync();
+
+            ViewBag.Propietario = propietario;
+            return View(inmuebles);
+        }
+
+        [Authorize]
         // GET: Inmuebles/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

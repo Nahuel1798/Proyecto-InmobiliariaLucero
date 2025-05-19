@@ -65,8 +65,18 @@ namespace Inmobiliaria.Controllers
                 ModelState.AddModelError("", "El inmueble ya está alquilado en ese período.");
             }
 
+            foreach(var modelState in ModelState.Values)
+            {
+                foreach(var error in modelState.Errors)
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
+            }
+
             if (ModelState.IsValid)
             {
+                contrato.UsuarioAltaId = int.Parse(User.Claims.First(c => c.Type == "Id").Value);
+                contrato.UsuarioBajaId = null;
                 _context.Add(contrato);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -132,6 +142,7 @@ namespace Inmobiliaria.Controllers
         }
 
         //Trae los contratos vigentes
+        [Authorize]
         public async Task<IActionResult> Vigentes()
         {
             var hoy = DateTime.Today;
@@ -145,6 +156,7 @@ namespace Inmobiliaria.Controllers
         }
 
         //Trae los contratos por inmueble
+        [Authorize]
         public async Task<IActionResult> PorInmueble(int id)
         {
             var inmueble = await _context.Inmuebles.FindAsync(id);
@@ -158,6 +170,45 @@ namespace Inmobiliaria.Controllers
             ViewBag.Inmueble = inmueble;
             return View(contratos);
         }
+
+        //Renovar contrato
+        [Authorize]
+        public IActionResult Renovar(int id)
+        {
+            var original = _context.Contratos.Find(id);
+
+            if (original == null)
+                return NotFound();
+
+            var nuevo = new Contrato
+            {
+                InmuebleId = original.InmuebleId,
+                InquilinoId = original.InquilinoId,
+                MontoMensual = original.MontoMensual,
+                FechaInicio = original.FechaFin.AddDays(1),
+                FechaFin = original.FechaFin.AddYears(1),
+            };
+
+            ViewBag.Inmueble = original.Inmueble?.Direccion;
+            ViewBag.Inquilino = original.Inquilino?.NombreCompleto;
+
+            return View(nuevo);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Renovar(Contrato contrato)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(contrato);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+
+            return View(contrato);
+        }
+
 
         //Finaliza contrato anticipadamente
         [Authorize(Roles = "Administrador,Empleado")]

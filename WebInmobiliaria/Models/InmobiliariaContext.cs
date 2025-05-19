@@ -7,6 +7,7 @@ public class InmobiliariaContext : DbContext
     public DbSet<Propietario> Propietarios { get; set; }
     public DbSet<Inquilino> Inquilinos { get; set; }
     public DbSet<Inmueble> Inmuebles { get; set; }
+    public DbSet<TipoInmueble> TipoInmueble { get; set; }
     public DbSet<Contrato> Contratos { get; set; }
     public DbSet<Pago> Pagos { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
@@ -18,8 +19,15 @@ public class InmobiliariaContext : DbContext
         // Relación Propietario - Inmueble (1:N)
         modelBuilder.Entity<Inmueble>()
             .HasOne(i => i.Propietario)
-            .WithMany()
+            .WithMany(p => p.Inmuebles)
             .HasForeignKey(i => i.PropietarioId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Relación TipoInmueble - Inmueble (1:N)
+        modelBuilder.Entity<Inmueble>()
+            .HasOne(i => i.TipoInmueble)
+            .WithMany(t => t.Inmuebles)
+            .HasForeignKey(i => i.TipoInmuebleId)
             .OnDelete(DeleteBehavior.Restrict);
 
         // Relación Inmueble - Contrato (1:N)

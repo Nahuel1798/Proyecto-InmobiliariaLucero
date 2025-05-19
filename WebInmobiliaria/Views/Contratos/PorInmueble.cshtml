@@ -1,5 +1,5 @@
 @model List<Contrato>
-@{
+@* @{
     var inmueble = ViewBag.Inmueble as Inmueble;
 }
 <h2>Contratos del Inmueble: @inmueble.Direccion</h2>
@@ -18,4 +18,38 @@
         </tr>
     }
     </tbody>
-</table>
+</table> *@
+@{
+    ViewData["Title"] = "Contratos por Inmueble";
+}
+
+<h1 class="mb-4">Contratos por Inmueble</h1>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No hay contratos registrados para este inmueble.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Inquilino</th>
+                <th>Desde</th>
+                <th>Hasta</th>
+                <th>Monto</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Inquilino?.NombreCompleto</td>
+                <td>@item.FechaInicio.ToShortDateString()</td>
+                <td>@item.FechaFin.ToShortDateString()</td>
+                <td>@item.MontoMensual.ToString("C")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

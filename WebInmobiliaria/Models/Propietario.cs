@@ -1,34 +1,42 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+
 public class Propietario
 {
     [Key]
     public int Id { get; set; }
+
     [Required]
+    [StringLength(20)]
     public string? Dni { get; set; }
+
     [Required]
+    [StringLength(50)]
     public string? Apellido { get; set; }
+
     [Required]
+    [StringLength(50)]
     public string? Nombre { get; set; }
-    [Display(Name = "Teléfono")]
+
+    [Display(Name = "Teléfono")]
+    [Phone]
     public string? Telefono { get; set; }
+
     [Required, EmailAddress]
     public string? Email { get; set; }
-    
-    public List<Inmueble> Inmuebles { get; set; }
+
+    // Relación 1 a muchos con Inmueble
+    public List<Inmueble> Inmuebles { get; set; } = new();
 
     public override string ToString()
-  {
-    //return $"{Apellido}, {Nombre}";
-    //return $"{Nombre} {Apellido}";
-    var res = $"{Nombre} {Apellido}";
-    if (!String.IsNullOrEmpty(Dni))
     {
-      res += $" ({Dni})";
+        var res = $"{Nombre} {Apellido}";
+        if (!string.IsNullOrEmpty(Dni))
+        {
+            res += $" ({Dni})";
+        }
+        return res;
     }
-    return res;
-  }
 }
+

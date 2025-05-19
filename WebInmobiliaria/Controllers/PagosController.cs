@@ -53,7 +53,7 @@ namespace Inmobiliaria.Controllers
                 .Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
-                    Text = $"{c.Inquilino.NombreCompleto} - {c.Inmueble.Direccion}"
+                    Text = $"{c.Inquilino?.NombreCompleto} - {c.Inmueble?.Direccion}"
                 }).ToList();
             return View();
         }
@@ -78,7 +78,7 @@ namespace Inmobiliaria.Controllers
                 .Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
-                    Text = $"{c.Inquilino.NombreCompleto} - {c.Inmueble.Direccion}"
+                    Text = $"{c.Inquilino?.NombreCompleto} - {c.Inmueble?.Direccion}"
                 }).ToList();
             return View(pago);
         }
@@ -103,7 +103,7 @@ namespace Inmobiliaria.Controllers
                 .Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
-                    Text = $"{c.Inquilino.NombreCompleto} - {c.Inmueble.Direccion}"
+                    Text = $"{c.Inquilino?.NombreCompleto} - {c.Inmueble?.Direccion}"
                 }).ToList();
             return View(pago);
         }
@@ -147,7 +147,7 @@ namespace Inmobiliaria.Controllers
                 .Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
-                    Text = $"{c.Inquilino.NombreCompleto} - {c.Inmueble.Direccion}"
+                    Text = $"{c.Inquilino?.NombreCompleto} - {c.Inmueble?.Direccion}"
                 }).ToList();
             return View(pago);
         }
