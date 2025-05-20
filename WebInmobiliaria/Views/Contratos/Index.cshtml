@@ -1,6 +1,6 @@
 @model IEnumerable<Contrato>
 
-@{
+@* @{
     ViewData["Title"] = "Contratos";
 }
 
@@ -36,6 +36,67 @@
             </td>
         </tr>
 }
+    </tbody>
+</table> *@
+
+@{
+    ViewData["Title"] = "Buscar contratos por fecha";
+}
+
+<h1>Buscar Contratos</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary mb-2">Nuevo Contrato</a>
+</p>
+
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-3">
+        <label for="desde" class="form-label">Desde</label>
+        <input type="date" name="desde" id="desde" class="form-control" value="@ViewBag.Desde" />
+    </div>
+    <div class="col-md-3">
+        <label for="hasta" class="form-label">Hasta</label>
+        <input type="date" name="hasta" id="hasta" class="form-control" value="@ViewBag.Hasta" />
+    </div>
+
+    <div class="col-md-4">
+        <label for="direccionInmueble" class="form-label">Inmueble (Dirección)</label>
+        <input type="text" name="direccionInmueble" id="direccionInmueble" class="form-control" value="@ViewBag.DireccionInmueble" placeholder="Ej: Av. Siempre Viva 123" />
+    </div>
+    <div class="col-md-3 align-self-end">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        <a asp-action="Index" class="btn btn-secondary">Limpiar</a>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Inmueble</th>
+            <th>Inquilino</th>
+            <th>Fecha Desde</th>
+            <th>Fecha Hasta</th>
+            <th>Precio</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var contrato in Model)
+    {
+        <tr>
+            <td>@contrato.Inmueble?.Direccion</td>
+            <td>@contrato.Inquilino?.NombreCompleto</td>
+            <td>@contrato.FechaInicio.ToString("dd/MM/yyyy")</td>
+            <td>@contrato.FechaFin.ToString("dd/MM/yyyy")</td>
+            <td>$@contrato.MontoMensual</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@contrato.Id" class="btn btn-info btn-sm">Ver</a>
+                <a asp-action="Edit" asp-route-id="@contrato.Id" class="btn btn-warning btn-sm">Editar</a>
+                <a asp-controller="Pagos" asp-action="PorContrato" asp-route-id="@contrato.Id" class="btn btn-info btn-sm">Pagos</a>
+                <a asp-action="Delete" asp-route-id="@contrato.Id" class="btn btn-danger btn-sm">Eliminar</a>
+            </td>
+        </tr>
+    }
     </tbody>
 </table>
 

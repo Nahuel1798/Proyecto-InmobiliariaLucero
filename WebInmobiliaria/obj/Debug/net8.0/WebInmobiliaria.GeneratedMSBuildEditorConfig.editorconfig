@@ -50,10 +50,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJhdG9zXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Programacion/Tercer año/.Net/Proyecto InmobiliariaLucero/webinmobiliaria/Views/Contratos/PorInmueble.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJhdG9zXFBvcklubXVlYmxlLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
 [D:/Programacion/Tercer año/.Net/Proyecto InmobiliariaLucero/webinmobiliaria/Views/Contratos/Renovar.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJhdG9zXFJlbm92YXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -88,6 +84,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/Programacion/Tercer año/.Net/Proyecto InmobiliariaLucero/webinmobiliaria/Views/Inmuebles/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5tdWVibGVzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Programacion/Tercer año/.Net/Proyecto InmobiliariaLucero/webinmobiliaria/Views/Inmuebles/PorPropietario.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5tdWVibGVzXFBvclByb3BpZXRhcmlvLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/Programacion/Tercer año/.Net/Proyecto InmobiliariaLucero/webinmobiliaria/Views/Inquilinos/Create.cshtml]
@@ -132,6 +132,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/Programacion/Tercer año/.Net/Proyecto InmobiliariaLucero/webinmobiliaria/Views/Pagos/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFnb3NcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Programacion/Tercer año/.Net/Proyecto InmobiliariaLucero/webinmobiliaria/Views/Pagos/PorContrato.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFnb3NcUG9yQ29udHJhdG8uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/Programacion/Tercer año/.Net/Proyecto InmobiliariaLucero/webinmobiliaria/Views/Propietarios/Create.cshtml]

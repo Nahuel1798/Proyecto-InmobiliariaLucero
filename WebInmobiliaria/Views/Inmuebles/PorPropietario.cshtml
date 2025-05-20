@@ -1,0 +1,39 @@
+@model IEnumerable<Inmueble>
+@{
+    ViewData["Title"] = "Inmuebles del Propietario";
+    var propietario = ViewBag.Propietario;
+}
+
+<h2>Inmuebles de @propietario.Nombre @propietario.Apellido</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Dirección</th>
+            <th>Uso</th>
+            <th>Ambientes</th>
+            <th>Precio</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Direccion</td>
+            <td>@item.Uso</td>
+            <td>@item.Ambientes</td>
+            <td>$@item.Precio</td>
+            <td>@item.TipoInmueble.Descripcion</td>
+            <td>@(item.Estado ? "Disponible" : "No disponible")</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Editar</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Eliminar</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-secondary">Volver</a>

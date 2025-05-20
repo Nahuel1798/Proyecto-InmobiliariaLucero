@@ -104,17 +104,34 @@ public class UsuariosController : Controller
 
     [HttpPost]
     [Authorize(Roles = "Administrador")]
-    public async Task<IActionResult> Edit(Usuario u)
+    public async Task<IActionResult> Edit(Usuario actualizado, IFormFile? avatarNuevo)
     {
+        int id = int.Parse(User.Claims.First(c => c.Type == "Id").Value);
+        var usuario = context.Usuarios.Find(id);
         if (ModelState.IsValid)
         {
-            context.Update(u);
+            if (avatarNuevo != null && avatarNuevo.Length > 0)
+            {
+                string ruta = Path.Combine(environment.WebRootPath, "img", "avatars");
+                if (!Directory.Exists(ruta)) Directory.CreateDirectory(ruta);
+
+                string nombreArchivo = $"avatar_{usuario.Id}{Path.GetExtension(avatarNuevo.FileName)}";
+                string rutaCompleta = Path.Combine(ruta, nombreArchivo);
+
+                using (var fileStream = new FileStream(rutaCompleta, FileMode.Create))
+                {
+                    await avatarNuevo.CopyToAsync(fileStream);
+                }
+
+                usuario.Avatar = "/img/avatars/" + nombreArchivo;
+            }
+            context.Update(actualizado);
             await context.SaveChangesAsync();
             TempData["Mensaje"] = "Usuario actualizado";
             return RedirectToAction(nameof(Index));
         }
 
-        return View(u);
+        return View(actualizado);
     }
 
     [Authorize(Roles = "Administrador")]

@@ -180,7 +180,6 @@ namespace Inmobiliaria.Controllers
             return View(inmueble);
         }
 
-        [Authorize]
         public async Task<IActionResult> PorPropietario(int id)
         {
             var propietario = await _context.Propietarios.FindAsync(id);
@@ -191,12 +190,14 @@ namespace Inmobiliaria.Controllers
 
             var inmuebles = await _context.Inmuebles
                 .Include(i => i.Propietario)
+                .Include(i => i.TipoInmueble)
                 .Where(i => i.PropietarioId == id)
                 .ToListAsync();
 
             ViewBag.Propietario = propietario;
             return View(inmuebles);
         }
+
 
         [Authorize]
         // GET: Inmuebles/Delete/5

@@ -22,5 +22,20 @@
         </select>
     </div>
 
-    <button type="submit" class="btn btn-primary mt-2">Guardar</button>
+     <div class="form-group">
+        <label for="avatarFile">Cambiar Avatar</label>
+        <input type="file" name="avatarFile" class="form-control" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Avatar))
+    {
+        <div class="form-group">
+            <label>Avatar actual:</label><br />
+            <img src="@Model.Avatar" alt="Avatar" width="100" />
+        </div>
+    }
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </div>
 </form>

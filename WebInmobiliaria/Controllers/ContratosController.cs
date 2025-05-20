@@ -19,10 +19,33 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Contratos
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(DateTime? desde, DateTime? hasta, string direccionInmueble)
         {
-            var inmobiliariaContext = _context.Contratos.Include(c => c.Inmueble).Include(c => c.Inquilino);
-            return View(await inmobiliariaContext.ToListAsync());
+            var contratos = _context.Contratos
+                .Include(c => c.Inquilino)
+                .Include(c => c.Inmueble)
+                    .ThenInclude(i => i.Propietario)
+                .AsQueryable();
+
+                if (desde.HasValue)
+                {
+                    contratos = contratos.Where(c => c.FechaInicio >= desde.Value);
+                }
+
+                if (hasta.HasValue)
+                {
+                    contratos = contratos.Where(c => c.FechaFin <= hasta.Value);
+                }
+
+                if (!string.IsNullOrEmpty(direccionInmueble))
+                {
+                    contratos = contratos.Where(c => c.Inmueble.Direccion.Contains(direccionInmueble));
+                }
+
+                ViewBag.Desde = desde?.ToString("yyyy-MM-dd");
+                ViewBag.Hasta = hasta?.ToString("yyyy-MM-dd");
+
+                return View(await contratos.ToListAsync());
         }
 
         // GET: Contratos/Details/5
@@ -155,21 +178,6 @@ namespace Inmobiliaria.Controllers
             return View(contratos);
         }
 
-        //Trae los contratos por inmueble
-        [Authorize]
-        public async Task<IActionResult> PorInmueble(int id)
-        {
-            var inmueble = await _context.Inmuebles.FindAsync(id);
-            if (inmueble == null) return NotFound();
-
-            var contratos = await _context.Contratos
-                .Include(c => c.Inquilino)
-                .Where(c => c.InmuebleId == id)
-                .ToListAsync();
-
-            ViewBag.Inmueble = inmueble;
-            return View(contratos);
-        }
 
         //Renovar contrato
         [Authorize]

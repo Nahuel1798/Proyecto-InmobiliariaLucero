@@ -1,0 +1,58 @@
+@model IEnumerable<Pago>
+@{
+    ViewData["Title"] = "Pagos del Contrato";
+    var contrato = ViewBag.Contrato;
+    int contratoId = ViewBag.ContratoId;
+}
+
+<h2>Pagos del Contrato #@contrato.Id</h2>
+<p><strong>Inquilino:</strong> @contrato.Inquilino.NombreCompleto</p>
+<p><strong>Inmueble:</strong> @contrato.Inmueble.Direccion</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Fecha de Pago</th>
+            <th>Importe</th>
+            <th>Número de Pago</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var pago in Model)
+    {
+        <tr>
+            <td>@pago.FechaPago.ToShortDateString()</td>
+            <td>$@pago.Importe</td>
+            <td>@pago.NumeroPeriodo</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<hr />
+
+<h4>Cargar nuevo pago</h4>
+
+<form asp-action="CrearDesdeContrato" method="post">
+    <input type="hidden" name="ContratoId" value="@contratoId">
+
+    <div class="form-group">
+        <label>Fecha de Pago</label>
+        <input name="FechaPago" type="date" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label>Importe</label>
+        <input name="Importe" type="number" step="0.01" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label>Número de Pago</label>
+        <input name="NumeroPago" type="number" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-success">Registrar Pago</button>
+</form>
+
+<a asp-controller="Contratos" asp-action="Index" class="btn btn-secondary mt-3">Volver a Contratos</a>
+

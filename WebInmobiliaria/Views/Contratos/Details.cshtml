@@ -1,58 +1,5 @@
 @model Contrato
 
-@* @{
-    ViewData["Title"] = "Details";
-}
-
-<h1>Detalle</h1>
-
-<div>
-    <h4>Contrato</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaInicio)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaInicio)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaFin)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaFin)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MontoMensual)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MontoMensual)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Inquilino)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Inquilino.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Inmueble)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Inmueble.Direccion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaTerminacionAnticipada)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaTerminacionAnticipada)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a> |
-    <a asp-action="Index">Volver</a>
-</div> *@
-
 @{
     ViewData["Title"] = "Detalles del Contrato";
 }

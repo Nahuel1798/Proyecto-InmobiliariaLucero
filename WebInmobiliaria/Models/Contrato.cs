@@ -33,7 +33,7 @@ public class Contrato
     public DateTime FechaFin { get; set; }
 
     [Required]
-    [Range(1, 9999999)]
+    [Range(1, 9999)]
     [Display(Name = "Monto mensual")]
     public decimal MontoMensual { get; set; }
 

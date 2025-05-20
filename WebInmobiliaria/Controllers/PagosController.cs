@@ -152,6 +152,46 @@ namespace Inmobiliaria.Controllers
             return View(pago);
         }
 
+        //Listar pagos realizados
+        public async Task<IActionResult> PorContrato(int id)
+        {
+            var contrato = await _context.Contratos
+                .Include(c => c.Inquilino)
+                .Include(c => c.Inmueble)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (contrato == null)
+            {
+                return NotFound();
+            }
+
+            var pagos = await _context.Pagos
+                .Where(p => p.ContratoId == id)
+                .OrderByDescending(p => p.FechaPago)
+                .ToListAsync();
+
+            ViewBag.Contrato = contrato;
+            ViewBag.ContratoId = id;
+
+            return View(pagos);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CrearDesdeContrato(Pago pago)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Pagos.Add(pago);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("PorContrato", new { id = pago.ContratoId });
+            }
+
+            // Si hay errores, volver a mostrar los pagos
+            return RedirectToAction("PorContrato", new { id = pago.ContratoId });
+        }
+
+
+
         // GET: Pagos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
