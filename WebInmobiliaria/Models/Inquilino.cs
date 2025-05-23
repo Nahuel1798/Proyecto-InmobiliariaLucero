@@ -20,6 +20,6 @@ public class Inquilino
 
     [Required, EmailAddress]
     public string? Email { get; set; }
-
+    //Un inquilino puede tener muchos contratos
     public List<Contrato> Contratos { get; set; } = new();
 }

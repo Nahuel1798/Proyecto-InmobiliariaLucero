@@ -43,6 +43,6 @@ public class Inmueble
 
     [ForeignKey(nameof(PropietarioId))]
     public Propietario? Propietario { get; set; }
-
+    //Un inmueble puede tener muchos contratos
     public List<Contrato> Contratos { get; set; } = new();
 }

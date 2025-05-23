@@ -1,8 +1,65 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mb-4">
+    <h1 class="display-4">Sistema Inmobiliario</h1>
+    <p>Bienvenido, @User?.Identity?.Name</p>
 </div>
+
+<hr />
+@if (User.Identity != null && User.Identity.IsAuthenticated){
+    <div class="row justify-content-center">
+    <div class="col-md-3 m-2">
+        <div class="card-panel text-center">
+            <img src="~/img/Modelos/ImagenContrato.png" alt="Contratos">
+            <h5>Contratos</h5>
+            <p>Gestione los contratos activos, vencidos y renovaciones fácilmente.</p>
+            <a asp-controller="Contratos" asp-action="Index" class="btn btn-primary w-100">Ver contratos</a>
+        </div>
+    </div>
+
+    <div class="col-md-3 m-2">
+        <div class="card-panel text-center">
+            <img src="~/img/inmueble.png" alt="Inmuebles">
+            <h5>Inmuebles</h5>
+            <p>Visualice y administre todos los inmuebles registrados.</p>
+            <a asp-controller="Inmuebles" asp-action="Index" class="btn btn-secondary w-100">Ver inmuebles</a>
+        </div>
+    </div>
+
+    <div class="col-md-3 m-2">
+        <div class="card-panel text-center">
+            <img src="~/img/propietario.png" alt="Propietarios">
+            <h5>Propietarios</h5>
+            <p>Administre los datos de los propietarios vinculados a los inmuebles.</p>
+            <a asp-controller="Propietarios" asp-action="Index" class="btn btn-success w-100">Ver propietarios</a>
+        </div>
+    </div>
+
+    <div class="col-md-3 m-2">
+        <div class="card-panel text-center">
+            <img src="~/img/inquilino.png" alt="Inquilinos">
+            <h5>Inquilinos</h5>
+            <p>Revise la información de los inquilinos y sus contratos.</p>
+            <a asp-controller="Inquilinos" asp-action="Index" class="btn btn-info w-100">Ver inquilinos</a>
+        </div>
+    </div>
+
+    <div class="col-md-3 m-2">
+        <div class="card-panel text-center">
+            <img src="~/img/pagos.png" alt="Pagos">
+            <h5>Pagos</h5>
+            <p>Consulte pagos realizados, períodos y montos asociados.</p>
+            <a asp-controller="Pagos" asp-action="Index" class="btn btn-warning w-100">Ver pagos</a>
+        </div>
+    </div>
+</div>
+}
+else
+{
+    <div class="alert alert-warning text-center mt-5">
+        <h5>Debes iniciar sesión para ver esta información.</h5>
+    </div>
+}
+

@@ -1,0 +1,30 @@
+@model Pago
+
+@{
+    ViewData["Title"] = "Registrar Pago";
+}
+
+<h2>Registrar Pago</h2>
+
+<form asp-action="Pagar" method="post">
+    <input type="hidden" asp-for="ContratoId" />
+
+    <div class="mb-3">
+        <label asp-for="FechaPago" class="form-label"></label>
+        <input asp-for="FechaPago" class="form-control" type="date" />
+        <span asp-validation-for="FechaPago" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Importe" class="form-label"></label>
+        <input asp-for="Importe" class="form-control" />
+        <span asp-validation-for="Importe" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Confirmar Pago</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

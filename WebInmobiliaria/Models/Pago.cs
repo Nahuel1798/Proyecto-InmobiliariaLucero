@@ -29,7 +29,6 @@ public class Pago
     [Display(Name = "Número de pago")]
     public int NumeroPeriodo { get; set; } // Ej: "1" para el primer mes
 
-    [Required]
     [StringLength(100)]
     [Display(Name = "Concepto")]
     public string Concepto { get; set; } = string.Empty; // Ej: "Abono mes mayo"

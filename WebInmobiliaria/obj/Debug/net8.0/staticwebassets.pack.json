@@ -13,12 +13,24 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\img\\Fondo\\FondoInmobiliaria.jpg",
+      "PackagePath": "staticwebassets\\img\\Fondo\\FondoInmobiliaria.jpg"
+    },
+    {
+      "Id": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\img\\Modelos\\ImagenContrato.png",
+      "PackagePath": "staticwebassets\\img\\Modelos\\ImagenContrato.png"
+    },
+    {
       "Id": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\img\\avatars\\avatar_1.png",
       "PackagePath": "staticwebassets\\img\\avatars\\avatar_1.png"
     },
     {
-      "Id": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\js\\site.js",
-      "PackagePath": "staticwebassets\\js\\site.js"
+      "Id": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\js\\Contrato.js",
+      "PackagePath": "staticwebassets\\js\\Contrato.js"
+    },
+    {
+      "Id": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\js\\ValidarRenovacionContrato.js",
+      "PackagePath": "staticwebassets\\js\\ValidarRenovacionContrato.js"
     },
     {
       "Id": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\lib\\bootstrap\\LICENSE",

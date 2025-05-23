@@ -27,25 +27,30 @@ namespace Inmobiliaria.Controllers
                     .ThenInclude(i => i.Propietario)
                 .AsQueryable();
 
-                if (desde.HasValue)
-                {
-                    contratos = contratos.Where(c => c.FechaInicio >= desde.Value);
-                }
+            // Buscar contratos cuya FechaInicio y FechaFin estén entre 'desde' y 'hasta'
+            if (desde.HasValue && hasta.HasValue)
+            {
+                contratos = contratos.Where(c =>
+                    c.FechaInicio >= desde.Value && c.FechaFin <= hasta.Value);
+            }
+            else if (desde.HasValue)
+            {
+                contratos = contratos.Where(c => c.FechaInicio >= desde.Value);
+            }
+            else if (hasta.HasValue)
+            {
+                contratos = contratos.Where(c => c.FechaFin <= hasta.Value);
+            }
 
-                if (hasta.HasValue)
-                {
-                    contratos = contratos.Where(c => c.FechaFin <= hasta.Value);
-                }
+            if (!string.IsNullOrEmpty(direccionInmueble))
+            {
+                contratos = contratos.Where(c => c.Inmueble.Direccion.Contains(direccionInmueble));
+            }
 
-                if (!string.IsNullOrEmpty(direccionInmueble))
-                {
-                    contratos = contratos.Where(c => c.Inmueble.Direccion.Contains(direccionInmueble));
-                }
+            ViewBag.Desde = desde?.ToString("yyyy-MM-dd");
+            ViewBag.Hasta = hasta?.ToString("yyyy-MM-dd");
 
-                ViewBag.Desde = desde?.ToString("yyyy-MM-dd");
-                ViewBag.Hasta = hasta?.ToString("yyyy-MM-dd");
-
-                return View(await contratos.ToListAsync());
+            return View(await contratos.ToListAsync());
         }
 
         // GET: Contratos/Details/5
@@ -69,28 +74,51 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Contratos/Create
-        public IActionResult Create()
+        public IActionResult Create(string nombreInquilino = "", string direccionInmueble = "")
         {
-            ViewData["InquilinoId"] = new SelectList(_context.Inquilinos, "Id", "NombreCompleto");
-            ViewData["InmuebleId"] = new SelectList(_context.Inmuebles.Where(i => i.Estado), "Id", "Direccion");
+            var inquilinos = _context.Inquilinos.AsQueryable();
+            var inmuebles = _context.Inmuebles.Where(i => i.Estado).AsQueryable(); // solo disponibles
+
+            if (!string.IsNullOrWhiteSpace(nombreInquilino))
+            {
+                inquilinos = inquilinos.Where(i => i.NombreCompleto.Contains(nombreInquilino));
+            }
+
+            if (!string.IsNullOrWhiteSpace(direccionInmueble))
+            {
+                inmuebles = inmuebles.Where(i => i.Direccion.Contains(direccionInmueble));
+            }
+
+            ViewBag.NombreBuscado = nombreInquilino;
+            ViewBag.DireccionBuscada = direccionInmueble;
+            ViewBag.Inquilinos = inquilinos.ToList();
+            ViewBag.Inmuebles = inmuebles.ToList();
+
             return View();
         }
+
+
 
         // POST: Contratos/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FechaInicio,FechaFin,MontoMensual,InquilinoId,InmuebleId,FechaTerminacionAnticipada")] Contrato contrato)
+        [Authorize(Roles = "Administrador,Empleado")]
+        public async Task<IActionResult> Create([Bind("Id,FechaInicio,FechaFin,MontoMensual,InquilinoId,InmuebleId,FechaTerminacionAnticipada")] Contrato contrato, string NombreCompleto, string Direccion)
         {
             if (ExisteSuperposicionFechas(contrato.InmuebleId, contrato.FechaInicio, contrato.FechaFin))
             {
                 ModelState.AddModelError("", "El inmueble ya está alquilado en ese período.");
             }
 
-            foreach(var modelState in ModelState.Values)
+            if (contrato.FechaFin != contrato.FechaInicio.AddYears(1))
             {
-                foreach(var error in modelState.Errors)
+                ModelState.AddModelError("FechaFin", "La fecha de finalización debe ser exactamente un año después de la fecha de inicio.");
+            }
+
+            foreach (var modelState in ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
                 {
                     Console.WriteLine(error.ErrorMessage);
                 }
@@ -100,14 +128,42 @@ namespace Inmobiliaria.Controllers
             {
                 contrato.UsuarioAltaId = int.Parse(User.Claims.First(c => c.Type == "Id").Value);
                 contrato.UsuarioBajaId = null;
+
+                // Marcar el inmueble como no disponible
+                var inmueble = await _context.Inmuebles.FindAsync(contrato.InmuebleId);
+                if (inmueble != null)
+                {
+                    inmueble.Estado = false;
+                    _context.Update(inmueble);
+                }
+
                 _context.Add(contrato);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["InquilinoId"] = new SelectList(_context.Inquilinos, "Id", "NombreCompleto");
-            ViewData["InmuebleId"] = new SelectList(_context.Inmuebles.Where(i => i.Estado), "Id", "Direccion");
+
+            // Si falla, volver a cargar las listas filtradas
+            var inquilinos = _context.Inquilinos.AsQueryable();
+            var inmuebles = _context.Inmuebles.Where(i => i.Estado).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(NombreCompleto))
+            {
+                inquilinos = inquilinos.Where(i => i.NombreCompleto.Contains(NombreCompleto));
+            }
+
+            if (!string.IsNullOrWhiteSpace(Direccion))
+            {
+                inmuebles = inmuebles.Where(i => i.Direccion.Contains(Direccion));
+            }
+
+            ViewBag.NombreBuscado = NombreCompleto;
+            ViewBag.DireccionBuscada = Direccion;
+            ViewBag.Inquilinos = inquilinos.ToList();
+            ViewBag.Inmuebles = inmuebles.ToList();
+
             return View(contrato);
         }
+
 
         // GET: Contratos/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -164,26 +220,15 @@ namespace Inmobiliaria.Controllers
             return View(contrato);
         }
 
-        //Trae los contratos vigentes
-        [Authorize]
-        public async Task<IActionResult> Vigentes()
-        {
-            var hoy = DateTime.Today;
-            var contratos = await _context.Contratos
-                .Include(c => c.Inquilino)
-                .Include(c => c.Inmueble)
-                .Where(c => c.FechaInicio <= hoy && c.FechaFin >= hoy && c.FechaTerminacionAnticipada == null)
-                .ToListAsync();
 
-            return View(contratos);
-        }
-
-
-        //Renovar contrato
+        //GET:  Contratos/Vigentes
         [Authorize]
         public IActionResult Renovar(int id)
         {
-            var original = _context.Contratos.Find(id);
+            var original = _context.Contratos
+                .Include(c => c.Inquilino)
+                .Include(c => c.Inmueble)
+                .FirstOrDefault(c => c.Id == id);
 
             if (original == null)
                 return NotFound();
@@ -203,16 +248,46 @@ namespace Inmobiliaria.Controllers
             return View(nuevo);
         }
 
+        //POST:  Contratos/Vigentes
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Renovar(Contrato contrato)
         {
             if (ModelState.IsValid)
             {
+                contrato.Id = 0;
+                var usuarioId = int.Parse(User.Claims.First(c => c.Type == "Id").Value);
+
+                // Buscar el contrato original activo
+                var original = await _context.Contratos
+                    .FirstOrDefaultAsync(c =>
+                        c.InquilinoId == contrato.InquilinoId &&
+                        c.InmuebleId == contrato.InmuebleId &&
+                        c.FechaTerminacionAnticipada == null &&
+                        c.FechaFin >= DateTime.Today);
+
+                if (original != null)
+                {
+                    _context.Contratos.Remove(original); // ⬅️ Eliminar contrato anterior
+                }
+
+                contrato.UsuarioAltaId = usuarioId;
                 _context.Add(contrato);
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
+
+            // Si algo falla, volvemos a cargar los datos visibles
+            var originalContrato = await _context.Contratos
+                .Include(c => c.Inquilino)
+                .Include(c => c.Inmueble)
+                .FirstOrDefaultAsync(c =>
+                    c.InquilinoId == contrato.InquilinoId &&
+                    c.InmuebleId == contrato.InmuebleId);
+
+            ViewBag.Inquilino = originalContrato?.Inquilino?.NombreCompleto;
+            ViewBag.Inmueble = originalContrato?.Inmueble?.Direccion;
 
             return View(contrato);
         }
@@ -220,45 +295,89 @@ namespace Inmobiliaria.Controllers
 
         //Finaliza contrato anticipadamente
         [Authorize(Roles = "Administrador,Empleado")]
-        public async Task<IActionResult> Finalizar(int id)
+        public async Task<IActionResult> FinalizarAnticipadamente(int id)
         {
             var contrato = await _context.Contratos
+                .Include(c => c.Inquilino)
                 .Include(c => c.Inmueble)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (contrato == null || contrato.FechaTerminacionAnticipada != null)
+            {
                 return NotFound();
+            }
 
             var hoy = DateTime.Today;
             var duracionTotal = (contrato.FechaFin - contrato.FechaInicio).TotalDays;
-            var duracionTranscurrida = (hoy - contrato.FechaInicio).TotalDays;
+            var diasCumplidos = (hoy - contrato.FechaInicio).TotalDays;
+            var mitad = duracionTotal / 2;
 
-            bool mitadOmenos = duracionTranscurrida < (duracionTotal / 2);
-            var multa = contrato.MontoMensual * (mitadOmenos ? 2 : 1);
+            // Calcular multa
+            decimal multa = diasCumplidos < mitad ? contrato.MontoMensual * 2 : contrato.MontoMensual;
+            contrato.MontoMulta = multa;
 
-            ViewBag.Multa = multa;
-            ViewBag.MesesAdeudados = await _context.Pagos.CountAsync(p => p.ContratoId == contrato.Id) < 
-                                    ((hoy.Month - contrato.FechaInicio.Month) + (12 * (hoy.Year - contrato.FechaInicio.Year)));
-
-            return View(contrato);
+            return View("FinalizarAnticipadamente", contrato);
         }
 
         [HttpPost]
-        public async Task<IActionResult> ConfirmarFinalizacion(int id)
+        [Authorize(Roles = "Administrador,Empleado")]
+        public async Task<IActionResult> FinalizarAnticipadamente(Contrato contrato)
         {
-            var contrato = await _context.Contratos.FindAsync(id);
-            if (contrato == null) return NotFound();
+            var original = await _context.Contratos.FirstOrDefaultAsync(c => c.Id == contrato.Id);
 
-            contrato.FechaTerminacionAnticipada = DateTime.Today;
+            if (original == null || original.FechaTerminacionAnticipada != null)
+                return NotFound();
 
-            // Cálculo de multa
-            var total = (contrato.FechaFin - contrato.FechaInicio).TotalDays;
-            var actual = (DateTime.Today - contrato.FechaInicio).TotalDays;
-            bool mitad = actual < (total / 2);
-            contrato.MontoMulta = contrato.MontoMensual * (mitad ? 2 : 1);
+            var hoy = DateTime.Today;
+            var usuarioId = int.Parse(User.Claims.First(c => c.Type == "Id").Value);
 
+            var duracionTotal = (original.FechaFin - original.FechaInicio).TotalDays;
+            var diasCumplidos = (hoy - original.FechaInicio).TotalDays;
+            var mitad = duracionTotal / 2;
+
+            // Calcular multa
+            decimal multa = diasCumplidos < mitad ? original.MontoMensual * 2 : original.MontoMensual;
+
+            original.FechaTerminacionAnticipada = hoy;
+            original.MontoMulta = multa;
+            original.UsuarioBajaId = usuarioId;
+
+            _context.Update(original);
+            // Registrar el pago de la multa
+            var pagoMulta = new Pago
+            {
+                ContratoId = original.Id,
+                FechaPago = hoy,
+                Importe = multa,
+                Concepto = "Multa por finalización anticipada",
+                UsuarioAltaId = usuarioId
+            };
+
+            _context.Pagos.Add(pagoMulta);
             await _context.SaveChangesAsync();
+
+            TempData["Mensaje"] = $"Contrato finalizado anticipadamente. Multa: ${multa:N2}";
             return RedirectToAction("Index");
+        }
+
+
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Finalizar(int id)
+        {
+            var contrato = await _context.Contratos.FirstOrDefaultAsync(p => p.Id == id);
+
+            if (contrato == null || contrato.Estado)
+                return NotFound();
+
+            var usuarioId = int.Parse(User.Claims.First(c => c.Type == "Id").Value);
+            contrato.Estado = false;
+            contrato.UsuarioBajaId = usuarioId;
+
+            _context.Update(contrato);
+            await _context.SaveChangesAsync();
+
+            TempData["Mensaje"] = $"El Contrato #{contrato.Id} fue Finalizado correctamente.";
+            return RedirectToAction("FinalizarAnticipadamente",contrato);
         }
 
 

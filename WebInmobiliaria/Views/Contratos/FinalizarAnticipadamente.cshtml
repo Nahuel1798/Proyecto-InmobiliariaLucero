@@ -1,0 +1,26 @@
+@model Contrato
+
+@{
+    ViewData["Title"] = "FinalizarAnticipadamente";
+}
+
+<h1 class="mb-4 text-danger">Finalizar Contrato Anticipadamente</h1>
+
+<div class="alert alert-warning">
+    <p>¿Está seguro que desea finalizar anticipadamente este contrato?</p>
+    <p><strong>Inquilino:</strong> @Model.Inquilino.NombreCompleto</p>
+    <p><strong>Inmueble:</strong> @Model.Inmueble.Direccion</p>
+    <p><strong>Fecha de Inicio:</strong> @Model.FechaInicio.ToShortDateString()</p>
+    <p><strong>Fecha de Fin:</strong> @Model.FechaFin.ToShortDateString()</p>
+    <p><strong>Multa por finalización anticipada:</strong> 
+    <span class="text-danger fw-bold">
+        $@(Model.MontoMulta != null ? Model.MontoMulta.Value.ToString("F2") : "0.00")
+    </span>
+</p>
+</div>
+
+<form asp-action="FinalizarAnticipadamente" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Finalizar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

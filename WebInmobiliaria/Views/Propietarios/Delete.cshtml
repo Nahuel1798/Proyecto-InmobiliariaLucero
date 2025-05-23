@@ -4,11 +4,10 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Borrar</h1>
+<h1>Borrar Propietario</h1>
 
 <h3>¿Estas seguro de Borrar esto?</del></del></h3>
-<div>
-    <h4>Propietario</h4>
+<div class="card">
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -41,11 +40,10 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Email)
         </dd>
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" value="Delete" class="btn btn-danger">Borrar</button>
+            <a asp-action="Index" class="btn btn-secondary">Volver</a>
+        </form>
     </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Volver</a>
-    </form>
 </div>

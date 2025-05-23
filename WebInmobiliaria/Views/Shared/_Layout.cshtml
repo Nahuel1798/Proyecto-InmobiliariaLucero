@@ -6,12 +6,16 @@
     <title>@ViewBag.Title</title>
 
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="~/css/main.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
     @RenderSection("Styles", false)
 </head>
@@ -67,16 +71,16 @@
         </nav>
     </header>
 
-    <main role="main" class="container pt-5 mt-3">
-        <div class="m-1 p-1">
+    <div class="container-centered">
+        <main role="main" class="pb-3">
             @RenderBody()
-        </div>
-    </main>
+        </main>
+    </div>
 
     <footer class="footer mt-auto py-3 bg-light border-top">
         <div class="container">
             <span class="text-muted">&copy; @DateTime.Today.Year Universidad de La Punta &middot; 
-                <a href="https://github.com/marianoluzza/inmobiliariaULP" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i> Repo</a> &middot; 
+                <a href="https://github.com/Nahuel1798/Proyecto-InmobiliariaLucero.git" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i> Repo</a> &middot; 
                 <a href="https://docs.google.com/document/d/1VqhEIR3T5QwZG2N371M-0fIUqPdmDdNy9AQ06D7zxfo" target="_blank" rel="noopener noreferrer">Narrativa</a> 
                 <a class="float-end" href="#">Volver arriba</a>
             </span>

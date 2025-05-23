@@ -32,6 +32,21 @@
                 <dt class="col-sm-3">Multa</dt>
                 <dd class="col-sm-9">@Model.MontoMulta?.ToString("C")</dd>
             }
+
+            @if (User.IsInRole("Administrador"))
+            {
+                <h5>Auditoría</h5>
+                <dl class="row">
+                    <dt class="col-sm-3">Registrado por</dt>
+                    <dd class="col-sm-9">@Model.UsuarioAlta?.Email</dd>
+
+                    @if (Model.UsuarioBaja != null)
+                    {
+                        <dt class="col-sm-3">Finalizado por</dt>
+                        <dd class="col-sm-9">@Model.UsuarioBaja?.Email</dd>
+                    }
+                </dl>
+            }
         </dl>
         <a asp-action="Index" class="btn btn-secondary">Volver</a>
     </div>

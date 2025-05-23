@@ -114,6 +114,23 @@ namespace Inmobiliaria.Controllers
             return View(propietario);
         }
 
+        [HttpGet("Propietario/Buscar")]
+        public JsonResult Buscar(string nombre = "")
+        {
+            var propietarios = _context.Propietarios
+                .Where(p => string.IsNullOrEmpty(nombre) ||
+                            (p.Nombre + " " + p.Apellido).ToLower().Contains(nombre.ToLower()))
+                .Select(p => new {
+                    id = p.Id,
+                    nombreCompleto = p.Nombre + " " + p.Apellido,
+                    email = p.Email
+                }).ToList();
+
+            return Json(propietarios);
+        }
+
+        
+
         // GET: Propietarios/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

@@ -1,58 +1,73 @@
 @model IEnumerable<Pago>
 @{
     ViewData["Title"] = "Pagos del Contrato";
-    var contrato = ViewBag.Contrato;
-    int contratoId = ViewBag.ContratoId;
+    var contrato = ViewBag.Contrato as Contrato;
 }
 
-<h2>Pagos del Contrato #@contrato.Id</h2>
-<p><strong>Inquilino:</strong> @contrato.Inquilino.NombreCompleto</p>
-<p><strong>Inmueble:</strong> @contrato.Inmueble.Direccion</p>
+<h2>Pagos del Contrato</h2>
 
-<table class="table table-bordered">
-    <thead>
+<div class="card">
+    <p><strong>Inquilino:</strong> @contrato?.Inquilino?.NombreCompleto</p>
+    <p><strong>Inmueble:</strong> @contrato?.Inmueble?.Direccion</p>
+    <p><strong>Monto mensual:</strong> $@contrato?.MontoMensual.ToString("N2")</p>
+    <p><strong>Periodo:</strong> @contrato?.FechaInicio.ToShortDateString() - @contrato?.FechaFin.ToShortDateString()</p>
+</div>
+
+
+<form asp-action="CrearDesdeContrato" method="post" class="mt-3">
+    <h4>Registrar nuevo pago</h4>
+    <input type="hidden" name="ContratoId" value="@ViewBag.ContratoId" />
+
+    <div class="card">
+        <div class="col-md-4">
+            <label for="Importe" class="form-label">Importe</label>
+            <input type="number" step="0.01" min="1" name="Importe" class="form-control" required />
+        </div>
+        <div class="col-md-4">
+            <label for="Observaciones" class="form-label">Observaciones</label>
+            <input type="text" name="Observaciones" class="form-control" maxlength="250" />
+        </div>
+        <div div class="col-md-4">
+            <button type="submit" class="btn btn-success">Registrar Pago</button>
+        </div>
+    </div>
+</form>
+<table class="table table-striped">
+    <thead class="table-dark">
         <tr>
             <th>Fecha de Pago</th>
             <th>Importe</th>
-            <th>Número de Pago</th>
+            <th>N° de Pago</th>
+            <th>Estado</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
-    @foreach (var pago in Model)
-    {
-        <tr>
-            <td>@pago.FechaPago.ToShortDateString()</td>
-            <td>$@pago.Importe</td>
-            <td>@pago.NumeroPeriodo</td>
-        </tr>
-    }
+        @foreach (var pago in Model)
+        {
+            <tr class="@(pago.Anulado ? "text-danger text-decoration-line-through" : "")">
+                <td>@pago.FechaPago.ToShortDateString()</td>
+                <td>$@pago.Importe.ToString("N2")</td>
+                <td>@pago.NumeroPeriodo</td>
+                <td>@(pago.Anulado ? "Anulado" : "Activo")</td>
+                <td>
+                    <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@pago.Id">Eliminar</a>
+                    <td>
+                        @if (!pago.Anulado)
+                        {
+                            <a asp-action="Anular" asp-route-id="@pago.Id"
+                            class="btn btn-sm btn-danger"
+                            onclick="return confirm('¿Está seguro que desea anular este pago?');">
+                                <i class="bi bi-x-circle"></i> Anular
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Anulado</span>
+                        }
+                    </td>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
-
-<hr />
-
-<h4>Cargar nuevo pago</h4>
-
-<form asp-action="CrearDesdeContrato" method="post">
-    <input type="hidden" name="ContratoId" value="@contratoId">
-
-    <div class="form-group">
-        <label>Fecha de Pago</label>
-        <input name="FechaPago" type="date" class="form-control" required />
-    </div>
-
-    <div class="form-group">
-        <label>Importe</label>
-        <input name="Importe" type="number" step="0.01" class="form-control" required />
-    </div>
-
-    <div class="form-group">
-        <label>Número de Pago</label>
-        <input name="NumeroPago" type="number" class="form-control" required />
-    </div>
-
-    <button type="submit" class="btn btn-success">Registrar Pago</button>
-</form>
-
-<a asp-controller="Contratos" asp-action="Index" class="btn btn-secondary mt-3">Volver a Contratos</a>
-

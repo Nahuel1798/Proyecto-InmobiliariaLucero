@@ -21,7 +21,5 @@ public class Usuario
 
     [StringLength(255)]
     public string? Avatar { get; set; }
-
-    // Solo los administradores pueden gestionar otros usuarios (esto se controla con lógica de roles)
 }
 

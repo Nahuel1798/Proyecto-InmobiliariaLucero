@@ -1,51 +1,43 @@
 @model Pago
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nuevo Pago";
 }
 
-<h1>Crear</h1>
+<h2>@ViewData["Title"]</h2>
 
-<h4>Pago</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="FechaPago" class="control-label"></label>
-                <input asp-for="FechaPago" class="form-control" />
-                <span asp-validation-for="FechaPago" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Importe" class="control-label"></label>
-                <input asp-for="Importe" class="form-control" />
-                <span asp-validation-for="Importe" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ContratoId" class="control-label"></label>
-                <select asp-for="ContratoId" class ="form-control" asp-items="ViewBag.ContratoId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="NumeroPeriodo" class="control-label"></label>
-                <input asp-for="NumeroPeriodo" class="form-control" />
-                <span asp-validation-for="NumeroPeriodo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Observaciones" class="control-label"></label>
-                <input asp-for="Observaciones" class="form-control" />
-                <span asp-validation-for="Observaciones" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="ContratoId" class="form-label"></label>
+        <select asp-for="ContratoId" class="form-select" asp-items="ViewBag.ContratoId">
+            <option value="">Seleccione un contrato</option>
+        </select>
+        <span asp-validation-for="ContratoId" class="text-danger"></span>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Volver</a>
-</div>
+    <div class="mb-3">
+        <label asp-for="Importe" class="form-label"></label>
+        <input asp-for="Importe" class="form-control" step="0.01" />
+        <span asp-validation-for="Importe" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Observaciones" class="form-label"></label>
+        <textarea asp-for="Observaciones" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Observaciones" class="text-danger"></span>
+    </div>
+
+    <!-- Campos automáticos ocultos -->
+    <input type="hidden" asp-for="FechaPago" />
+    <input type="hidden" asp-for="NumeroPeriodo" />
+    <input type="hidden" asp-for="Concepto">
+    <input type="hidden" asp-for="Anulado" />
+
+    <button type="submit" class="btn btn-primary">Registrar Pago</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "PE7H8/CeZrk=",
+  "dgSpecHash": "QElWI7CFxO0=",
   "success": true,
   "projectFilePath": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\WebInmobiliaria.csproj",
   "expectedPackageFiles": [
@@ -163,7 +163,9 @@
     "C:\\Users\\Nahuel\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512",
     "C:\\Users\\Nahuel\\.nuget\\packages\\system.threading.channels\\7.0.0\\system.threading.channels.7.0.0.nupkg.sha512",
     "C:\\Users\\Nahuel\\.nuget\\packages\\system.threading.tasks.dataflow\\7.0.0\\system.threading.tasks.dataflow.7.0.0.nupkg.sha512",
-    "C:\\Users\\Nahuel\\.nuget\\packages\\system.windows.extensions\\7.0.0\\system.windows.extensions.7.0.0.nupkg.sha512"
+    "C:\\Users\\Nahuel\\.nuget\\packages\\system.windows.extensions\\7.0.0\\system.windows.extensions.7.0.0.nupkg.sha512",
+    "C:\\Users\\Nahuel\\.nuget\\packages\\x.pagedlist\\10.5.7\\x.pagedlist.10.5.7.nupkg.sha512",
+    "C:\\Users\\Nahuel\\.nuget\\packages\\x.pagedlist.mvc.core\\10.5.7\\x.pagedlist.mvc.core.10.5.7.nupkg.sha512"
   ],
   "logs": []
 }

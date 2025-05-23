@@ -41,9 +41,12 @@ public class Contrato
     [Display(Name = "Fecha de terminación anticipada")]
     public DateTime? FechaTerminacionAnticipada { get; set; }
 
+    [Required]
+    public bool Estado { get; set; } = true;
+
     [Display(Name = "Monto de multa")]
     public decimal? MontoMulta { get; set; }
-
+    //Un contrato tiene muchos pagos
     public List<Pago> Pagos { get; set; } = new();
 
     // Auditoría

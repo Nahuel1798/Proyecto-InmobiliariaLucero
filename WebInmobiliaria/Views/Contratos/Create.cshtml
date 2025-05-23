@@ -5,50 +5,196 @@
 }
 
 <h1 class="mb-4">Crear Contrato</h1>
+<div class="card">
+    <form asp-action="Create" method="post" class="row g-3">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <!-- Buscar Inquilino -->
+        <div class="col-md-6">
+            <label>Inquilino</label>
+            <div class="input-group">
+                <input type="hidden" name="InquilinoId" id="InquilinoId" />
+                <input type="text" class="form-control" id="InquilinoNombre" readonly placeholder="Seleccione un inquilino" />
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modalInquilinos">Buscar</button>
+            </div>
+            <span asp-validation-for="InquilinoId" class="text-danger"></span>
+        </div>
 
-<form asp-action="Create" method="post" class="row g-3">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <!-- Buscar Inmueble -->
+        <div class="col-md-6">
+            <label>Inmueble</label>
+            <div class="input-group">
+                <input type="hidden" name="InmuebleId" id="InmuebleId" />
+                <input type="text" class="form-control" id="InmuebleDireccion" readonly placeholder="Seleccione un inmueble" />
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modalInmuebles">Buscar</button>
+            </div>
+            <span asp-validation-for="InmuebleId" class="text-danger"></span>
+        </div>
 
-    <div class="col-md-6">
-        <label asp-for="InquilinoId" class="form-label">Inquilino</label>
-        <select asp-for="InquilinoId" class="form-select" asp-items="ViewBag.InquilinoId">
-            <option value="">Seleccione un inquilino</option>
-        </select>
-        <span asp-validation-for="InquilinoId" class="text-danger"></span>
+        <div class="col-md-4">
+            <label asp-for="FechaInicio" class="form-label"></label>
+            <input asp-for="FechaInicio" class="form-control" type="date" />
+            <span asp-validation-for="FechaInicio" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="FechaFin" class="form-label"></label>
+            <input asp-for="FechaFin" class="form-control" type="date" />
+            <span asp-validation-for="FechaFin" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="MontoMensual" class="form-label"></label>
+            <input asp-for="MontoMensual" class="form-control" type="number" step="0.01" />
+            <span asp-validation-for="MontoMensual" class="text-danger"></span>
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+
+    <!-- Modal Inquilinos -->
+    <div class="modal fade" id="modalInquilinos" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">Seleccionar Inquilino</h5></div>
+                <div class="modal-body">
+                    <!-- Buscador -->
+                    <div class="mb-2 d-flex">
+                        <input type="text" id="filtroInquilino" class="form-control me-2" placeholder="Buscar por nombre..." />
+                        <button type="button" class="btn btn-primary" onclick="filtrarInquilinos()">Buscar</button>
+                        <button type="button" class="btn btn-secondary" onclick="limpiarFiltroInquilinos()">Limpiar</button>
+                    </div>
+
+                    <!-- Tabla -->
+                    <table class="table table-striped" id="tablaInquilinos">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>DNI</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var inq in ViewBag.Inquilinos as List<Inquilino>)
+                            {
+                                <tr>
+                                    <td>@inq.NombreCompleto</td>
+                                    <td>@inq.Dni</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-primary"
+                                                onclick="seleccionarInquilino(@inq.Id, '@inq.NombreCompleto')">
+                                            Seleccionar
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="col-md-6">
-        <label asp-for="InmuebleId" class="form-label">Inmueble</label>
-        <select asp-for="InmuebleId" class="form-select" asp-items="ViewBag.InmuebleId">
-            <option value="">Seleccione un inmueble</option>
-        </select>
-        <span asp-validation-for="InmuebleId" class="text-danger"></span>
-    </div>
 
-    <div class="col-md-4">
-        <label asp-for="FechaInicio" class="form-label"></label>
-        <input asp-for="FechaInicio" class="form-control" type="date" />
-        <span asp-validation-for="FechaInicio" class="text-danger"></span>
-    </div>
+    <!-- Modal Inmuebles -->
+    <div class="modal fade" id="modalInmuebles" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">Seleccionar Inmueble</h5></div>
+                <div class="modal-body">
+                    <!-- Buscador -->
+                    <div class="mb-2 d-flex">
+                        <input type="text" id="filtroInmueble" class="form-control me-2" placeholder="Buscar por dirección..." />
+                        <button type="button" class="btn btn-primary" onclick="filtrarInmuebles()">Buscar</button>
+                        <button type="button" class="btn btn-secondary" onclick="limpiarFiltroInmuebles()">Limpiar</button>
+                    </div>
 
-    <div class="col-md-4">
-        <label asp-for="FechaFin" class="form-label"></label>
-        <input asp-for="FechaFin" class="form-control" type="date" />
-        <span asp-validation-for="FechaFin" class="text-danger"></span>
+                    <!-- Tabla -->
+                    <table class="table table-striped" id="tablaInmuebles">
+                        <thead>
+                            <tr>
+                                <th>Dirección</th>
+                                <th>Uso</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var inm in ViewBag.Inmuebles as List<Inmueble>)
+                            {
+                                <tr>
+                                    <td>@inm.Direccion</td>
+                                    <td>@inm.Uso</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-primary"
+                                                onclick="seleccionarInmueble(@inm.Id, '@inm.Direccion')">
+                                            Seleccionar
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div class="col-md-4">
-        <label asp-for="MontoMensual" class="form-label"></label>
-        <input asp-for="MontoMensual" class="form-control" />
-        <span asp-validation-for="MontoMensual" class="text-danger"></span>
-    </div>
 
-    <div class="col-12">
-        <button type="submit" class="btn btn-primary">Guardar</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-    </div>
-</form>
+
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+    function filtrarInquilinos() {
+        const input = document.getElementById("filtroInquilino").value.toLowerCase();
+        const filas = document.querySelectorAll("#tablaInquilinos tbody tr");
+
+        filas.forEach(fila => {
+            const nombre = fila.cells[0].innerText.toLowerCase();
+            fila.style.display = nombre.includes(input) ? "" : "none";
+        });
+    }
+
+    function limpiarFiltroInquilinos() {
+        document.getElementById("filtroInquilino").value = "";
+        filtrarInquilinos();
+    }
+
+    function filtrarInmuebles() {
+        const input = document.getElementById("filtroInmueble").value.toLowerCase();
+        const filas = document.querySelectorAll("#tablaInmuebles tbody tr");
+
+        filas.forEach(fila => {
+            const direccion = fila.cells[0].innerText.toLowerCase();
+            fila.style.display = direccion.includes(input) ? "" : "none";
+        });
+    }
+
+    function limpiarFiltroInmuebles() {
+        document.getElementById("filtroInmueble").value = "";
+        filtrarInmuebles();
+    }
+
+
+    function seleccionarInquilino(id, nombre) {
+        document.getElementById("InquilinoId").value = id;
+        document.getElementById("InquilinoNombre").value = nombre;
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalInquilinos'));
+        modal.hide();
+    }
+
+    function seleccionarInmueble(id, direccion) {
+        document.getElementById("InmuebleId").value = id;
+        document.getElementById("InmuebleDireccion").value = direccion;
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalInmuebles'));
+        modal.hide();
+    }
+    </script>
+
 }
+

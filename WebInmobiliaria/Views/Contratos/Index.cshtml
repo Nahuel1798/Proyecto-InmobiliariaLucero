@@ -1,44 +1,5 @@
 @model IEnumerable<Contrato>
 
-@* @{
-    ViewData["Title"] = "Contratos";
-}
-
-<h1 class="mb-4">Lista de Contratos</h1>
-
-<p>
-    <a asp-action="Create" class="btn btn-primary mb-2">Nuevo Contrato</a>
-</p>
-
-<table class="table table-striped">
-    <thead class="table-dark">
-        <tr>
-            <th>Inquilino</th>
-            <th>Inmueble</th>
-            <th>Fecha Inicio</th>
-            <th>Fecha Fin</th>
-            <th>Mensualidad</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>@item.Inquilino?.NombreCompleto</td>
-            <td>@item.Inmueble?.Direccion</td>
-            <td>@item.FechaInicio.ToShortDateString()</td>
-            <td>@item.FechaFin.ToShortDateString()</td>
-            <td>@item.MontoMensual.ToString("C")</td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Editar</a>
-                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Detalles</a>
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Eliminar</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table> *@
-
 @{
     ViewData["Title"] = "Buscar contratos por fecha";
 }
@@ -77,22 +38,28 @@
             <th>Fecha Desde</th>
             <th>Fecha Hasta</th>
             <th>Precio</th>
+            <th>Estado</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
     @foreach (var contrato in Model)
     {
-        <tr>
+        <tr class="@(!contrato.Estado ? "text-danger text-decoration-line-through" : "")">
             <td>@contrato.Inmueble?.Direccion</td>
             <td>@contrato.Inquilino?.NombreCompleto</td>
             <td>@contrato.FechaInicio.ToString("dd/MM/yyyy")</td>
             <td>@contrato.FechaFin.ToString("dd/MM/yyyy")</td>
-            <td>$@contrato.MontoMensual</td>
+            <td>@contrato.MontoMensual.ToString("F2")</td>
+            <td>@(contrato.Estado ? "Activo" : "Finalizado")</td>
             <td>
                 <a asp-action="Details" asp-route-id="@contrato.Id" class="btn btn-info btn-sm">Ver</a>
                 <a asp-action="Edit" asp-route-id="@contrato.Id" class="btn btn-warning btn-sm">Editar</a>
                 <a asp-controller="Pagos" asp-action="PorContrato" asp-route-id="@contrato.Id" class="btn btn-info btn-sm">Pagos</a>
+                <a asp-action="Renovar" asp-route-id="@contrato.Id" class="btn btn-sm btn-warning">Renovar contrato</a>
+                @if (contrato.Estado){
+                    <a asp-action="FinalizarAnticipadamente" asp-route-id="@contrato.Id" class="btn btn-danger btn-sm">Finalizar</a>
+                }
                 <a asp-action="Delete" asp-route-id="@contrato.Id" class="btn btn-danger btn-sm">Eliminar</a>
             </td>
         </tr>

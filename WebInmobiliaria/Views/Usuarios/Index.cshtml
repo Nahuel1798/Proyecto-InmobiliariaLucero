@@ -1,8 +1,15 @@
 @model IEnumerable<Usuario>
 
-<h2>Usuarios</h2>
-<a asp-action="Create" class="btn btn-primary mb-2">Nuevo usuario</a>
+@{
+    ViewData["Title"] = "Index";
+    var usuarioIdActual = ViewBag.UsuarioId?.ToString();
+}
 
+<h1 class="mb-4">Usuarios</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary mb-2">Nuevo usuario</a>
+</p>
 <table class="table table-striped">
     <thead class="table-dark">
         <tr>
@@ -26,7 +33,11 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@u.Id" class="btn btn-sm btn-primary">Editar</a> |
-                <a asp-action="Delete" asp-route-id="@u.Id" class="btn btn-sm btn-danger">Eliminar</a>
+                @if (u.Id.ToString() != usuarioIdActual)
+                {
+                    @: |
+                    <a asp-action="Delete" asp-route-id="@u.Id" class="btn btn-sm btn-danger">Eliminar</a>
+                }
             </td>
         </tr>
     }

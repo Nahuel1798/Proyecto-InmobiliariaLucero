@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Inmobiliaria.Controllers
 {
@@ -67,8 +68,18 @@ namespace Inmobiliaria.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Calcular número de período automáticamente
+                var numeroPago = await _context.Pagos
+                    .Where(p => p.ContratoId == pago.ContratoId && !p.Anulado)
+                    .CountAsync() + 1;
+
+                pago.NumeroPeriodo = numeroPago;
+                pago.FechaPago = DateTime.Now;
+                pago.Anulado = false;
+
                 _context.Add(pago);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ContratoId"] = _context.Contratos
@@ -177,8 +188,45 @@ namespace Inmobiliaria.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrador,Empleado")]
+        public async Task<IActionResult> RegistrarPagoMulta(int contratoId, decimal importe)
+        {
+            var pago = new Pago
+            {
+                ContratoId = contratoId,
+                Importe = importe,
+                FechaPago = DateTime.Today,
+                Concepto = "Pago por multa de finalización anticipada"
+            };
+
+            _context.Pagos.Add(pago);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Contrato");
+        }
+
+
+        [HttpPost]
         public async Task<IActionResult> CrearDesdeContrato(Pago pago)
         {
+            // Calcular el número de período
+            var numeroPago = await _context.Pagos
+                .Where(p => p.ContratoId == pago.ContratoId && !p.Anulado)
+                .CountAsync() + 1;
+
+            pago.NumeroPeriodo = numeroPago;
+            pago.FechaPago = DateTime.Now;
+            pago.Concepto = $"Abono mes {numeroPago}";
+            pago.Anulado = false;
+
+            // Asignar usuario logueado
+            var usuarioId = int.Parse(User.Claims.First(c => c.Type == "Id").Value);
+            pago.UsuarioAltaId = usuarioId;
+
+            // 🔥 RESETEAR Y VOLVER A VALIDAR
+            ModelState.Clear();
+            TryValidateModel(pago);
+
             if (ModelState.IsValid)
             {
                 _context.Pagos.Add(pago);
@@ -186,10 +234,41 @@ namespace Inmobiliaria.Controllers
                 return RedirectToAction("PorContrato", new { id = pago.ContratoId });
             }
 
-            // Si hay errores, volver a mostrar los pagos
-            return RedirectToAction("PorContrato", new { id = pago.ContratoId });
+            // Si hay errores, volver a cargar la vista
+            var contrato = await _context.Contratos
+                .Include(c => c.Inquilino)
+                .Include(c => c.Inmueble)
+                .FirstOrDefaultAsync(c => c.Id == pago.ContratoId);
+
+            var pagos = await _context.Pagos
+                .Where(p => p.ContratoId == pago.ContratoId)
+                .OrderByDescending(p => p.FechaPago)
+                .ToListAsync();
+
+            ViewBag.Contrato = contrato;
+            ViewBag.ContratoId = pago.ContratoId;
+
+            return View("PorContrato", pagos);
         }
 
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Anular(int id)
+        {
+            var pago = await _context.Pagos.FirstOrDefaultAsync(p => p.Id == id);
+
+            if (pago == null || pago.Anulado)
+                return NotFound();
+
+            var usuarioId = int.Parse(User.Claims.First(c => c.Type == "Id").Value);
+            pago.Anulado = true;
+            pago.UsuarioAnulacionId = usuarioId;
+
+            _context.Update(pago);
+            await _context.SaveChangesAsync();
+
+            TempData["Mensaje"] = $"El pago #{pago.Id} fue anulado correctamente.";
+            return RedirectToAction("PorContrato",pago);
+        }
 
 
         // GET: Pagos/Delete/5

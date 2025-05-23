@@ -245,3 +245,6 @@ D:\Programacion\Tercer año\.Net\Proyecto InmobiliariaLucero\Webinmobiliaria\obj
 D:\Programacion\Tercer año\.Net\Proyecto InmobiliariaLucero\Webinmobiliaria\obj\Debug\net8.0\WebInmobiliaria.pdb
 D:\Programacion\Tercer año\.Net\Proyecto InmobiliariaLucero\Webinmobiliaria\obj\Debug\net8.0\WebInmobiliaria.genruntimeconfig.cache
 D:\Programacion\Tercer año\.Net\Proyecto InmobiliariaLucero\Webinmobiliaria\obj\Debug\net8.0\ref\WebInmobiliaria.dll
+D:\Programacion\Tercer año\.Net\Proyecto InmobiliariaLucero\webinmobiliaria\bin\Debug\net8.0\X.PagedList.dll
+D:\Programacion\Tercer año\.Net\Proyecto InmobiliariaLucero\webinmobiliaria\bin\Debug\net8.0\X.PagedList.Mvc.Core.dll
+D:\Programacion\Tercer año\.Net\Proyecto InmobiliariaLucero\webinmobiliaria\obj\Debug\net8.0\WebInmobiliaria.MvcApplicationPartsAssemblyInfo.cs

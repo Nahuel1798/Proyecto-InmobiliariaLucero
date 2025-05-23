@@ -1,83 +1,49 @@
 @model IEnumerable<Inmueble>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Listado de Inmuebles";
 }
 
-<h1>Index</h1>
+<h1 class="mb-4">Inmuebles</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary mb-2" >Crear nuevo</a>
-</p>
+<div class="mb-3">
+    <a class="btn btn-primary" asp-action="Create">Agregar Inmueble</a>
+    <a class="btn btn-secondary" asp-action="Index">Ver solo activos</a>
+    <a class="btn btn-outline-secondary" asp-action="Todos">Ver Alquilados</a>
+</div>
+
 <table class="table table-striped">
     <thead class="table-dark">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Direccion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Uso)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TipoInmueble)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ambientes)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Latitud)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Longitud)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Precio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Estado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Propietario)
-            </th>
-            <th></th>
+            <th>Dirección</th>
+            <th>Propietario</th>
+            <th>Tipo</th>
+            <th>Ambientes</th>
+            <th>Precio</th>
+            <th>Estado</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Direccion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Uso)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TipoInmueble)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ambientes)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Latitud)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Longitud)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Precio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Estado)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Propietario.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Editar</a>
-                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Detalles</a>
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Eliminar</a>
-            </td>
-        </tr>
+@foreach (var item in Model)
+{
+    <tr class="@(item.Estado ? "" : "table-danger")">
+        <td>@item.Direccion</td>
+        <td>@item.Propietario?.Nombre @item.Propietario?.Apellido</td>
+        <td>@item.TipoInmueble?.Descripcion</td>
+        <td>@item.Ambientes</td>
+        <td>@item.Precio.ToString("C")</td>
+        <td>
+            <span class="badge @(item.Estado ? "bg-success" : "bg-danger")">
+                @(item.Estado ? "Disponible" : "No disponible")
+            </span>
+        </td>
+        <td>
+            <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+            <a class="btn btn-sm btn-secondary" asp-action="Details" asp-route-id="@item.Id">Detalles</a>
+            <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+        </td>
+    </tr>
 }
     </tbody>
 </table>

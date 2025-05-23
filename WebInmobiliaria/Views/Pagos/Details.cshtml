@@ -40,6 +40,20 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Contrato.Id)
         </dd>
+        @if (User.IsInRole("Administrador"))
+        {
+            <h5>Auditoría</h5>
+            <dl class="row">
+                <dt class="col-sm-3">Registrado por</dt>
+                <dd class="col-sm-9">@Model.UsuarioAlta?.Email</dd>
+
+                @if (Model.UsuarioAnulacion != null)
+                {
+                    <dt class="col-sm-3">Anulado por</dt>
+                    <dd class="col-sm-9">@Model.UsuarioAnulacion?.Email</dd>
+                }
+            </dl>
+        }
     </dl>
 </div>
 <div>
