@@ -21,6 +21,18 @@
       "PackagePath": "staticwebassets\\img\\Modelos\\ImagenContrato.png"
     },
     {
+      "Id": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\img\\Modelos\\iconoInmueble.png",
+      "PackagePath": "staticwebassets\\img\\Modelos\\iconoInmueble.png"
+    },
+    {
+      "Id": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\img\\Modelos\\iconoInquilino.png",
+      "PackagePath": "staticwebassets\\img\\Modelos\\iconoInquilino.png"
+    },
+    {
+      "Id": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\img\\Modelos\\iconoPropietarios.png",
+      "PackagePath": "staticwebassets\\img\\Modelos\\iconoPropietarios.png"
+    },
+    {
       "Id": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\img\\avatars\\avatar_1.png",
       "PackagePath": "staticwebassets\\img\\avatars\\avatar_1.png"
     },
