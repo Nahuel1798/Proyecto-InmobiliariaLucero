@@ -1,30 +1,15 @@
 @model Pago
 
 @{
-    ViewData["Title"] = "Registrar Pago";
+    ViewData["Title"] = "Confirmar Pago";
 }
 
-<h2>Registrar Pago</h2>
+<h2>Confirmar Pago</h2>
 
-<form asp-action="Pagar" method="post">
-    <input type="hidden" asp-for="ContratoId" />
+<p>¿Está seguro que desea pagar el pago #@Model.Id por el período <strong>@Model.NumeroPeriodo</strong>?</p>
 
-    <div class="mb-3">
-        <label asp-for="FechaPago" class="form-label"></label>
-        <input asp-for="FechaPago" class="form-control" type="date" />
-        <span asp-validation-for="FechaPago" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Importe" class="form-label"></label>
-        <input asp-for="Importe" class="form-control" />
-        <span asp-validation-for="Importe" class="text-danger"></span>
-    </div>
-
+<form asp-action="PagarConfirmado" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
     <button type="submit" class="btn btn-success">Confirmar Pago</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    <a asp-action="PorContrato" asp-route-id="@Model?.ContratoId" class="btn btn-secondary">Volver</a>
 </form>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

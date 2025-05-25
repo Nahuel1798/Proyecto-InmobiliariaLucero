@@ -1,49 +1,115 @@
-@model IEnumerable<Inmueble>
+@model Paginador<Inmueble>
 
 @{
     ViewData["Title"] = "Listado de Inmuebles";
 }
 
-<h1 class="mb-4">Inmuebles</h1>
+<h1 class="mb-4">Listado de Inmuebles</h1>
 
-<div class="mb-3">
-    <a class="btn btn-primary" asp-action="Create">Agregar Inmueble</a>
-    <a class="btn btn-secondary" asp-action="Index">Ver solo activos</a>
-    <a class="btn btn-outline-secondary" asp-action="Todos">Ver Alquilados</a>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="btn-group" role="group">
+        <a class="btn btn-primary" asp-action="Create">
+            <i class="bi bi-plus-circle"></i> Agregar Inmueble
+        </a>
+        <a class="btn btn-outline-success" asp-action="Index">
+            <i class="bi bi-check-circle"></i> Ver solo activos
+        </a>
+        <a class="btn btn-outline-secondary" asp-action="Todos">
+            <i class="bi bi-house-slash"></i> Ver alquilados
+        </a>
+    </div>
+    <span class="text-muted">Página @Model.PaginaActual de @Model.TotalPaginas</span>
 </div>
 
-<table class="table table-striped">
-    <thead class="table-dark">
-        <tr>
-            <th>Dirección</th>
-            <th>Propietario</th>
-            <th>Tipo</th>
-            <th>Ambientes</th>
-            <th>Precio</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model)
-{
-    <tr class="@(item.Estado ? "" : "table-danger")">
-        <td>@item.Direccion</td>
-        <td>@item.Propietario?.Nombre @item.Propietario?.Apellido</td>
-        <td>@item.TipoInmueble?.Descripcion</td>
-        <td>@item.Ambientes</td>
-        <td>@item.Precio.ToString("C")</td>
-        <td>
-            <span class="badge @(item.Estado ? "bg-success" : "bg-danger")">
-                @(item.Estado ? "Disponible" : "No disponible")
-            </span>
-        </td>
-        <td>
-            <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
-            <a class="btn btn-sm btn-secondary" asp-action="Details" asp-route-id="@item.Id">Detalles</a>
-            <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
-        </td>
-    </tr>
-}
-    </tbody>
-</table>
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <label for="direccionInmueble" class="form-label">Dirección del Inmueble</label>
+        <input type="text" name="direccionInmueble" id="direccionInmueble" class="form-control" value="@ViewBag.direccionInmueble" placeholder="Ej: Av. Siempre Viva 123" />
+    </div>
+    <div class="col-md-2 d-flex align-items-end gap-2">
+        <button type="submit" class="btn btn-outline-primary w-100">
+            <i class="bi bi-search"></i> Buscar
+        </button>
+        <a asp-action="Index" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-x-circle"></i> Limpiar
+        </a>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Dirección</th>
+                <th>Propietario</th>
+                <th>Tipo</th>
+                <th>Ambientes</th>
+                <th>Precio</th>
+                <th>Estado</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr class="@(item.Estado ? "" : "table-danger")">
+                <td>@item.Direccion</td>
+                <td>@item.Propietario?.Nombre @item.Propietario?.Apellido</td>
+                <td>@item.TipoInmueble?.Descripcion</td>
+                <td>@item.Ambientes</td>
+                <td>@item.Precio.ToString("C")</td>
+                <td>
+                    <span class="badge @(item.Estado ? "bg-success" : "bg-danger")">
+                        @(item.Estado ? "Disponible" : "No disponible")
+                    </span>
+                </td>
+                <td class="text-center">
+                    <div class="d-flex flex-wrap gap-1 justify-content-center">
+                        <a class="btn btn-sm btn-outline-info" asp-action="Edit" asp-route-id="@item.Id" title="Editar">
+                            <i class="bi bi-pencil-square"></i>Editar
+                        </a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@item.Id" title="Detalles">
+                            <i class="bi bi-info-circle"></i>Detalles
+                        </a>
+                        <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id" title="Eliminar">
+                            <i class="bi bi-trash"></i>Eliminar
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<nav class="d-flex justify-content-center mt-4" aria-label="Paginación">
+    <ul class="pagination">
+        @if (Model.HayAnterior)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-pagina="@(Model.PaginaActual - 1)">Anterior</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link">Anterior</span>
+            </li>
+        }
+
+        <li class="page-item active"><span class="page-link">@Model.PaginaActual</span></li>
+
+        @if (Model.HaySiguiente)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-pagina="@(Model.PaginaActual + 1)">Siguiente</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link">Siguiente</span>
+            </li>
+        }
+    </ul>
+</nav>

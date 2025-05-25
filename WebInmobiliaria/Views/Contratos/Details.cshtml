@@ -8,46 +8,50 @@
 
 <div class="card">
     <div class="card-body">
-        <dl class="row">
+        <dl class="row mb-0">
             <dt class="col-sm-3">Inquilino</dt>
             <dd class="col-sm-9">@Model.Inquilino?.NombreCompleto</dd>
 
             <dt class="col-sm-3">Inmueble</dt>
             <dd class="col-sm-9">@Model.Inmueble?.Direccion</dd>
 
-            <dt class="col-sm-3">Fecha Inicio</dt>
+            <dt class="col-sm-3">Fecha de Inicio</dt>
             <dd class="col-sm-9">@Model.FechaInicio.ToShortDateString()</dd>
 
-            <dt class="col-sm-3">Fecha Fin</dt>
+            <dt class="col-sm-3">Fecha de Fin</dt>
             <dd class="col-sm-9">@Model.FechaFin.ToShortDateString()</dd>
 
             <dt class="col-sm-3">Monto Mensual</dt>
             <dd class="col-sm-9">@Model.MontoMensual.ToString("C")</dd>
 
-            @if (Model.FechaTerminacionAnticipada != null)
+            @if (Model.FechaTerminacionAnticipada.HasValue)
             {
                 <dt class="col-sm-3">Terminación Anticipada</dt>
                 <dd class="col-sm-9">@Model.FechaTerminacionAnticipada?.ToShortDateString()</dd>
 
-                <dt class="col-sm-3">Multa</dt>
+                <dt class="col-sm-3">Multa por Terminación</dt>
                 <dd class="col-sm-9">@Model.MontoMulta?.ToString("C")</dd>
             }
-
-            @if (User.IsInRole("Administrador"))
-            {
-                <h5>Auditoría</h5>
-                <dl class="row">
-                    <dt class="col-sm-3">Registrado por</dt>
-                    <dd class="col-sm-9">@Model.UsuarioAlta?.Email</dd>
-
-                    @if (Model.UsuarioBaja != null)
-                    {
-                        <dt class="col-sm-3">Finalizado por</dt>
-                        <dd class="col-sm-9">@Model.UsuarioBaja?.Email</dd>
-                    }
-                </dl>
-            }
         </dl>
-        <a asp-action="Index" class="btn btn-secondary">Volver</a>
+
+        @if (User.IsInRole("Administrador"))
+        {
+            <hr />
+            <h5 class="mt-4">Auditoría</h5>
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Registrado por</dt>
+                <dd class="col-sm-9">@Model.UsuarioAlta?.Email</dd>
+
+                @if (Model.UsuarioBaja != null)
+                {
+                    <dt class="col-sm-3">Finalizado por</dt>
+                    <dd class="col-sm-9">@Model.UsuarioBaja?.Email</dd>
+                }
+            </dl>
+        }
+
+        <div class="mt-4">
+            <a asp-action="Index" class="btn btn-secondary">Volver</a>
+        </div>
     </div>
 </div>

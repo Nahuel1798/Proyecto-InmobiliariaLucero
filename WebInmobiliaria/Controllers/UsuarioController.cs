@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -10,6 +10,7 @@ public class UsuariosController : Controller
 {
     private readonly InmobiliariaContext context;
     private readonly IWebHostEnvironment environment;
+    private readonly PasswordHasher<string> hasher = new();
 
     public UsuariosController(InmobiliariaContext ctx, IWebHostEnvironment env)
     {
@@ -22,12 +23,7 @@ public class UsuariosController : Controller
     // ==============================
 
     [AllowAnonymous]
-        public IActionResult Login()
-        {
-            return View(); // Esto debe buscar Views/Usuario/Login.cshtml
-        }
-
-
+    public IActionResult Login() => View();
 
     [HttpPost]
     [AllowAnonymous]
@@ -35,7 +31,7 @@ public class UsuariosController : Controller
     {
         var usuario = context.Usuarios.FirstOrDefault(u => u.Email == email);
 
-        if (usuario != null && usuario.Clave == clave) // ⚠️ usar hash
+        if (usuario != null && hasher.VerifyHashedPassword(null, usuario.Clave, clave) == PasswordVerificationResult.Success)
         {
             var claims = new List<Claim>
             {
@@ -45,8 +41,7 @@ public class UsuariosController : Controller
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(identity));
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
 
             return RedirectToAction("Index", "Home");
         }
@@ -63,21 +58,35 @@ public class UsuariosController : Controller
     }
 
     // ==============================
-    // ABM (solo ADMINISTRADORES)
+    // ABM USUARIOS (ADMINISTRADORES)
     // ==============================
 
     [Authorize(Roles = "Administrador")]
-    public IActionResult Index()
+    public IActionResult Index(string EmailUsuario = "", int pagina = 1, int tamañoPagina = 5)
     {
-        var usuarios = context.Usuarios.ToList();
-        return View(usuarios);
+        var query = context.Usuarios.AsQueryable();
+
+        if (!string.IsNullOrEmpty(EmailUsuario))
+        {
+            query = query.Where(u => u.Email.Contains(EmailUsuario));
+        }
+
+        var total = query.Count();
+
+        var items = query
+            .OrderBy(u => u.Email)
+            .Skip((pagina - 1) * tamañoPagina)
+            .Take(tamañoPagina)
+            .ToList();
+
+        ViewBag.EmailBuscado = EmailUsuario;
+
+        var modelo = new Paginador<Usuario>(items, total, pagina, tamañoPagina);
+        return View(modelo);
     }
 
     [AllowAnonymous]
-    public IActionResult Create()
-    {
-        return View();
-    }
+    public IActionResult Create() => View();
 
     [HttpPost]
     [AllowAnonymous]
@@ -85,10 +94,11 @@ public class UsuariosController : Controller
     {
         if (ModelState.IsValid)
         {
+            u.Clave = hasher.HashPassword(null, u.Clave);
             context.Add(u);
             await context.SaveChangesAsync();
             TempData["Mensaje"] = "Usuario creado";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Login));
         }
 
         return View(u);
@@ -106,14 +116,26 @@ public class UsuariosController : Controller
     [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Edit(Usuario actualizado, IFormFile? avatarNuevo)
     {
-        int id = int.Parse(User.Claims.First(c => c.Type == "Id").Value);
-        var usuario = context.Usuarios.Find(id);
+        var usuario = await context.Usuarios.FindAsync(actualizado.Id);
+        if (usuario == null) return NotFound();
+
         if (ModelState.IsValid)
         {
+            usuario.Email = actualizado.Email;
+            usuario.Rol = actualizado.Rol;
+
             if (avatarNuevo != null && avatarNuevo.Length > 0)
             {
                 string ruta = Path.Combine(environment.WebRootPath, "img", "avatars");
                 if (!Directory.Exists(ruta)) Directory.CreateDirectory(ruta);
+
+                // Borrar avatar anterior
+                if (!string.IsNullOrEmpty(usuario.Avatar))
+                {
+                    var rutaAnterior = Path.Combine(environment.WebRootPath, usuario.Avatar.TrimStart('/'));
+                    if (System.IO.File.Exists(rutaAnterior))
+                        System.IO.File.Delete(rutaAnterior);
+                }
 
                 string nombreArchivo = $"avatar_{usuario.Id}{Path.GetExtension(avatarNuevo.FileName)}";
                 string rutaCompleta = Path.Combine(ruta, nombreArchivo);
@@ -125,8 +147,10 @@ public class UsuariosController : Controller
 
                 usuario.Avatar = "/img/avatars/" + nombreArchivo;
             }
-            context.Update(actualizado);
+
+            context.Update(usuario);
             await context.SaveChangesAsync();
+
             TempData["Mensaje"] = "Usuario actualizado";
             return RedirectToAction(nameof(Index));
         }
@@ -140,6 +164,14 @@ public class UsuariosController : Controller
         var u = await context.Usuarios.FindAsync(id);
         if (u == null) return NotFound();
 
+        // Borrar avatar si existe
+        if (!string.IsNullOrEmpty(u.Avatar))
+        {
+            var ruta = Path.Combine(environment.WebRootPath, u.Avatar.TrimStart('/'));
+            if (System.IO.File.Exists(ruta))
+                System.IO.File.Delete(ruta);
+        }
+
         context.Usuarios.Remove(u);
         await context.SaveChangesAsync();
         TempData["Mensaje"] = "Usuario eliminado";
@@ -147,7 +179,7 @@ public class UsuariosController : Controller
     }
 
     // ==============================
-    // PERFIL DE USUARIO (Empleado o Admin)
+    // PERFIL USUARIO (LOGUEADO)
     // ==============================
 
     [Authorize]
@@ -171,13 +203,20 @@ public class UsuariosController : Controller
 
         if (!string.IsNullOrEmpty(nuevaClave))
         {
-            usuario.Clave = nuevaClave; // ⚠️ aplicar hashing en producción
+            usuario.Clave = hasher.HashPassword(null, nuevaClave);
         }
 
         if (avatarNuevo != null && avatarNuevo.Length > 0)
         {
             string ruta = Path.Combine(environment.WebRootPath, "img", "avatars");
             if (!Directory.Exists(ruta)) Directory.CreateDirectory(ruta);
+
+            if (!string.IsNullOrEmpty(usuario.Avatar))
+            {
+                var rutaAnterior = Path.Combine(environment.WebRootPath, usuario.Avatar.TrimStart('/'));
+                if (System.IO.File.Exists(rutaAnterior))
+                    System.IO.File.Delete(rutaAnterior);
+            }
 
             string nombreArchivo = $"avatar_{usuario.Id}{Path.GetExtension(avatarNuevo.FileName)}";
             string rutaCompleta = Path.Combine(ruta, nombreArchivo);
@@ -219,12 +258,9 @@ public class UsuariosController : Controller
     }
 
     // ==============================
-    // Acceso denegado
+    // ACCESO DENEGADO
     // ==============================
 
     [AllowAnonymous]
-    public IActionResult Denegado()
-    {
-        return View();
-    }
+    public IActionResult Denegado() => View();
 }

@@ -1,51 +1,54 @@
 @model Propietario
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Propietario";
 }
 
-<h1>Editar</h1>
+<h1 class="mb-4">Editar Propietario</h1>
 
-<h4>Propietario</h4>
-<hr />
-<div class="card">
-    <div>
-        <form asp-action="Edit" class="row g-3">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
             <input type="hidden" asp-for="Id" />
+
             <div class="mb-3">
-                <label asp-for="Dni" class="control-label"></label>
+                <label asp-for="Dni" class="form-label"></label>
                 <input asp-for="Dni" class="form-control" />
                 <span asp-validation-for="Dni" class="text-danger"></span>
             </div>
+
             <div class="mb-3">
-                <label asp-for="Apellido" class="control-label"></label>
+                <label asp-for="Apellido" class="form-label"></label>
                 <input asp-for="Apellido" class="form-control" />
                 <span asp-validation-for="Apellido" class="text-danger"></span>
             </div>
+
             <div class="mb-3">
-                <label asp-for="Nombre" class="control-label"></label>
+                <label asp-for="Nombre" class="form-label"></label>
                 <input asp-for="Nombre" class="form-control" />
                 <span asp-validation-for="Nombre" class="text-danger"></span>
             </div>
+
             <div class="mb-3">
-                <label asp-for="Telefono" class="control-label"></label>
+                <label asp-for="Telefono" class="form-label"></label>
                 <input asp-for="Telefono" class="form-control" />
                 <span asp-validation-for="Telefono" class="text-danger"></span>
             </div>
+
             <div class="mb-3">
-                <label asp-for="Email" class="control-label"></label>
+                <label asp-for="Email" class="form-label"></label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-            <div class="mb-3">
+
+            <div class="d-flex justify-content-between">
                 <button type="submit" class="btn btn-primary">Guardar</button>
-                <a asp-action="Index" class="btn btn-secondary ms-2">Volver al listado</a>
+                <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
             </div>
         </form>
     </div>
 </div>
-
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

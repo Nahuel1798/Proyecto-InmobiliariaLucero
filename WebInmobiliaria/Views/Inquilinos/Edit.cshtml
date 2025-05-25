@@ -1,48 +1,66 @@
 @model Inquilino
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar";
 }
 
-<h1>Editar</h1>
+<h1 class="mb-4">Editar Inquilino</h1>
 
-<h4>Inquilino</h4>
-<hr />
-<div class="card">
-    <div>
-        <form asp-action="Edit" class="row g-3">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form asp-action="Edit" class="row g-3 needs-validation" novalidate>
             <input type="hidden" asp-for="Id" />
-            <div class="mb-3">
-                <label asp-for="Dni" class="control-label"></label>
-                <input asp-for="Dni" class="form-control" />
+            
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="col-md-6">
+                <label asp-for="Dni" class="form-label fw-semibold"></label>
+                <input asp-for="Dni" class="form-control" required />
                 <span asp-validation-for="Dni" class="text-danger"></span>
             </div>
-            <div class="mb-3">
-                <label asp-for="NombreCompleto" class="control-label"></label>
-                <input asp-for="NombreCompleto" class="form-control" />
+
+            <div class="col-md-6">
+                <label asp-for="NombreCompleto" class="form-label fw-semibold"></label>
+                <input asp-for="NombreCompleto" class="form-control" required />
                 <span asp-validation-for="NombreCompleto" class="text-danger"></span>
             </div>
-            <div class="mb-3">
-                <label asp-for="Telefono" class="control-label"></label>
+
+            <div class="col-md-6">
+                <label asp-for="Telefono" class="form-label fw-semibold"></label>
                 <input asp-for="Telefono" class="form-control" />
                 <span asp-validation-for="Telefono" class="text-danger"></span>
             </div>
-            <div class="mb-3">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
+
+            <div class="col-md-6">
+                <label asp-for="Email" class="form-label fw-semibold"></label>
+                <input asp-for="Email" class="form-control" type="email" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-            <div class="mb-3">
+
+            <div class="col-12 mt-3">
                 <button type="submit" class="btn btn-primary">Guardar</button>
-                <a asp-action="Index" class="btn btn-secondary ms-2">Volver al listado</a>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a>
             </div>
         </form>
     </div>
 </div>
 
-
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+    // Ejemplo simple de validación de Bootstrap 5
+    (() => {
+      'use strict'
+      const forms = document.querySelectorAll('.needs-validation')
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+          form.classList.add('was-validated')
+        }, false)
+      })
+    })()
+    </script>
 }

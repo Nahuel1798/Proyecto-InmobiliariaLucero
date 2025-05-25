@@ -1,62 +1,52 @@
 @model Pago
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalle del Pago";
 }
 
-<h1>Detalle</h1>
+<div class="container mt-4" style="max-width: 800px;">
+    <h2 class="mb-4">Detalle del Pago</h2>
 
-<div>
-    <h4>Pago</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaPago)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaPago)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Importe)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Importe)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumeroPeriodo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumeroPeriodo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Observaciones)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Observaciones)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Contrato)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Contrato.Id)
-        </dd>
-        @if (User.IsInRole("Administrador"))
-        {
-            <h5>Auditoría</h5>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Información general</h5>
+            <hr />
             <dl class="row">
-                <dt class="col-sm-3">Registrado por</dt>
-                <dd class="col-sm-9">@Model.UsuarioAlta?.Email</dd>
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.FechaPago)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(m => m.FechaPago)</dd>
 
-                @if (Model.UsuarioAnulacion != null)
-                {
-                    <dt class="col-sm-3">Anulado por</dt>
-                    <dd class="col-sm-9">@Model.UsuarioAnulacion?.Email</dd>
-                }
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Importe)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(m => m.Importe)</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.NumeroPeriodo)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(m => m.NumeroPeriodo)</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Observaciones)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(m => m.Observaciones)</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Contrato)</dt>
+                <dd class="col-sm-8">Contrato N.º @Model.Contrato?.Id</dd>
             </dl>
-        }
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a> |
-    <a asp-action="Index">Volver</a>
+
+            @if (User.IsInRole("Administrador"))
+            {
+                <h5 class="mt-4">Auditoría</h5>
+                <dl class="row">
+                    <dt class="col-sm-4">Registrado por</dt>
+                    <dd class="col-sm-8">@Model.UsuarioAlta?.Email</dd>
+
+                    @if (Model.UsuarioAnulacion != null)
+                    {
+                        <dt class="col-sm-4">Anulado por</dt>
+                        <dd class="col-sm-8">@Model.UsuarioAnulacion?.Email</dd>
+                    }
+                </dl>
+            }
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a asp-action="PorContrato" asp-route-id="@Model?.ContratoId" class="btn btn-secondary">Volver</a>
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Editar</a>
+    </div>
 </div>

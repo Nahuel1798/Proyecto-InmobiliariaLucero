@@ -1,35 +1,43 @@
 @model Usuario
 
-<h2>Mi perfil</h2>
+<div class="container mt-4" style="max-width: 500px;">
+    <div class="card">
+        <h2 class="mb-4">Mi perfil</h2>
+        <form asp-action="Perfil" method="post" enctype="multipart/form-data" novalidate>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
 
-<form asp-action="Perfil" method="post" enctype="multipart/form-data">
-    <div>
-        <label>Email</label>
-        <input asp-for="Email" class="form-control" />
+            <div class="mb-3">
+                <label for="nuevaClave" class="form-label">Nueva contraseña</label>
+                <input id="nuevaClave" name="nuevaClave" type="password" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Avatar actual</label><br />
+                @if (!string.IsNullOrEmpty(Model.Avatar))
+                {
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="@Model.Avatar" width="100" class="img-thumbnail" />
+                        <a asp-action="QuitarAvatar" class="btn btn-outline-danger btn-sm">Quitar avatar</a>
+                    </div>
+                }
+                else
+                {
+                    <p>No hay avatar cargado</p>
+                }
+            </div>
+
+            <div class="mb-3">
+                <label for="avatarNuevo" class="form-label">Nuevo avatar</label>
+                <input id="avatarNuevo" type="file" name="avatarNuevo" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-success">Actualizar perfil</button>
+        </form>
     </div>
+    
+</div>
 
-    <div>
-        <label>Nueva contraseña</label>
-        <input name="nuevaClave" type="password" class="form-control" />
-    </div>
-
-    <div>
-        <label>Avatar actual:</label><br />
-        @if (!string.IsNullOrEmpty(Model.Avatar))
-        {
-            <img src="@Model.Avatar" width="100" />
-            <a asp-action="QuitarAvatar">Quitar avatar</a>
-        }
-        else
-        {
-            <p>No hay avatar cargado</p>
-        }
-    </div>
-
-    <div>
-        <label>Nuevo avatar</label>
-        <input type="file" name="avatarNuevo" class="form-control" />
-    </div>
-
-    <button type="submit" class="btn btn-success mt-2">Actualizar perfil</button>
-</form>

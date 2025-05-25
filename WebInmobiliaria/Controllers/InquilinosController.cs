@@ -18,10 +18,27 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Inquilinos
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string nombreInquilino, int pagina = 1, int tamañoPagina = 5)
         {
-            return View(await _context.Inquilinos.ToListAsync());
+            var total = await _context.Inquilinos.CountAsync();
+
+            var items = await _context.Inquilinos
+                .OrderBy(i => i.NombreCompleto)
+                .Skip((pagina - 1) * tamañoPagina)
+                .Take(tamañoPagina)
+                .ToListAsync();
+
+            if (!string.IsNullOrEmpty(nombreInquilino))
+            {
+                items = items.Where(i => i.NombreCompleto.Contains(nombreInquilino)).ToList();
+            }
+
+            ViewBag.NombreBuscado = nombreInquilino;
+
+            var modelo = new Paginador<Inquilino>(items, total, pagina, tamañoPagina);
+            return View(modelo);
         }
+
 
         // GET: Inquilinos/Details/5
         public async Task<IActionResult> Details(int? id)

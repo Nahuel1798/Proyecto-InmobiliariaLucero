@@ -19,10 +19,25 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Pagos
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pagina = 1, int tamañoPagina = 10)
         {
-            var inmobiliariaContext = _context.Pagos.Include(p => p.Contrato);
-            return View(await inmobiliariaContext.ToListAsync());
+            var pagos = _context.Pagos
+                .Include(p => p.Contrato)
+                    .ThenInclude(c => c.Inquilino)
+                .Include(p => p.Contrato)
+                    .ThenInclude(c => c.Inmueble)
+                .AsQueryable();
+
+            var total = await pagos.CountAsync();
+
+            var items = await pagos
+                .OrderByDescending(p => p.FechaPago)
+                .Skip((pagina - 1) * tamañoPagina)
+                .Take(tamañoPagina)
+                .ToListAsync();
+
+            var modelo = new Paginador<Pago>(items, total, pagina, tamañoPagina);
+            return View(modelo);
         }
 
         // GET: Pagos/Details/5
@@ -35,7 +50,13 @@ namespace Inmobiliaria.Controllers
 
             var pago = await _context.Pagos
                 .Include(p => p.Contrato)
+                    .ThenInclude(c => c.Inquilino)
+                .Include(p => p.Contrato)
+                    .ThenInclude(c => c.Inmueble)
+                .Include(p => p.UsuarioAlta)
+                .Include(p => p.UsuarioAnulacion)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (pago == null)
             {
                 return NotFound();
@@ -43,6 +64,7 @@ namespace Inmobiliaria.Controllers
 
             return View(pago);
         }
+
 
         // GET: Pagos/Create
         public IActionResult Create()
@@ -137,6 +159,8 @@ namespace Inmobiliaria.Controllers
                 {
                     _context.Update(pago);
                     await _context.SaveChangesAsync();
+                    // Redirigir a PorContrato con el id del contrato
+                    return RedirectToAction("PorContrato", new { id = pago.ContratoId });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -149,8 +173,9 @@ namespace Inmobiliaria.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
+
+            // Si el ModelState no es válido, recargar la lista para el dropdown y mostrar la vista
             ViewData["ContratoId"] = _context.Contratos
                 .Include(c => c.Inquilino)
                 .Include(c => c.Inmueble)
@@ -160,11 +185,13 @@ namespace Inmobiliaria.Controllers
                     Value = c.Id.ToString(),
                     Text = $"{c.Inquilino?.NombreCompleto} - {c.Inmueble?.Direccion}"
                 }).ToList();
-            return View(pago);
+
+            return View(pago);  // Mostrar la vista Edit para corregir errores
         }
 
+        
         //Listar pagos realizados
-        public async Task<IActionResult> PorContrato(int id)
+        public async Task<IActionResult> PorContrato(int id, int pagina = 1, int tamañoPagina = 10)
         {
             var contrato = await _context.Contratos
                 .Include(c => c.Inquilino)
@@ -176,15 +203,23 @@ namespace Inmobiliaria.Controllers
                 return NotFound();
             }
 
-            var pagos = await _context.Pagos
+            var pagosQuery = _context.Pagos
                 .Where(p => p.ContratoId == id)
-                .OrderByDescending(p => p.FechaPago)
+                .OrderByDescending(p => p.FechaPago);
+
+            var total = await pagosQuery.CountAsync();
+
+            var items = await pagosQuery
+                .Skip((pagina - 1) * tamañoPagina)
+                .Take(tamañoPagina)
                 .ToListAsync();
+
+            var modelo = new Paginador<Pago>(items, total, pagina, tamañoPagina);
 
             ViewBag.Contrato = contrato;
             ViewBag.ContratoId = id;
 
-            return View(pagos);
+            return View(modelo);
         }
 
         [HttpPost]
@@ -209,21 +244,40 @@ namespace Inmobiliaria.Controllers
         [HttpPost]
         public async Task<IActionResult> CrearDesdeContrato(Pago pago)
         {
-            // Calcular el número de período
-            var numeroPago = await _context.Pagos
-                .Where(p => p.ContratoId == pago.ContratoId && !p.Anulado)
-                .CountAsync() + 1;
+            // Obtener contrato
+            var contrato = await _context.Contratos
+                .FirstOrDefaultAsync(c => c.Id == pago.ContratoId);
 
-            pago.NumeroPeriodo = numeroPago;
+            if (contrato == null)
+                return NotFound();
+
+            // Calcular la cantidad de meses del contrato
+            var mesesContrato = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
+                                contrato.FechaFin.Month - contrato.FechaInicio.Month + 1;
+
+            // Contar pagos válidos existentes
+            var pagosRealizados = await _context.Pagos
+                .Where(p => p.ContratoId == pago.ContratoId && !p.Anulado)
+                .CountAsync();
+
+            // Verificar si ya se pagó todo el contrato
+            if (pagosRealizados >= mesesContrato)
+            {
+                TempData["Error"] = "Ya se han registrado todos los pagos de este contrato.";
+                return RedirectToAction("PorContrato", new { id = pago.ContratoId });
+            }
+
+            // Generar nuevo pago
+            pago.NumeroPeriodo = pagosRealizados + 1;
             pago.FechaPago = DateTime.Now;
-            pago.Concepto = $"Abono mes {numeroPago}";
+            pago.Concepto = $"Abono mes {pago.NumeroPeriodo}";
             pago.Anulado = false;
 
-            // Asignar usuario logueado
+            // Asignar usuario autenticado
             var usuarioId = int.Parse(User.Claims.First(c => c.Type == "Id").Value);
             pago.UsuarioAltaId = usuarioId;
 
-            // 🔥 RESETEAR Y VOLVER A VALIDAR
+            // Resetear ModelState y validar de nuevo
             ModelState.Clear();
             TryValidateModel(pago);
 
@@ -234,8 +288,8 @@ namespace Inmobiliaria.Controllers
                 return RedirectToAction("PorContrato", new { id = pago.ContratoId });
             }
 
-            // Si hay errores, volver a cargar la vista
-            var contrato = await _context.Contratos
+            // Si hay errores de validación
+            contrato = await _context.Contratos
                 .Include(c => c.Inquilino)
                 .Include(c => c.Inmueble)
                 .FirstOrDefaultAsync(c => c.Id == pago.ContratoId);
@@ -251,8 +305,25 @@ namespace Inmobiliaria.Controllers
             return View("PorContrato", pagos);
         }
 
-        [Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> Anular(int id)
+
+        [Authorize(Roles = "Administrador,Empleado")]
+        [HttpGet]
+        public async Task<IActionResult> Pagar(int id)
+        {
+            var pago = await _context.Pagos
+                .Include(p => p.Contrato)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (pago == null || pago.Anulado)
+                return NotFound();
+
+            return View(pago); // Vista: Views/Pagos/Pagar.cshtml
+        }
+
+        [Authorize(Roles = "Administrador,Empleado")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PagarConfirmado(int id)
         {
             var pago = await _context.Pagos.FirstOrDefaultAsync(p => p.Id == id);
 
@@ -266,9 +337,10 @@ namespace Inmobiliaria.Controllers
             _context.Update(pago);
             await _context.SaveChangesAsync();
 
-            TempData["Mensaje"] = $"El pago #{pago.Id} fue anulado correctamente.";
-            return RedirectToAction("PorContrato",pago);
+            TempData["Mensaje"] = $"El pago #{pago.Id} fue pagado correctamente.";
+            return RedirectToAction("PorContrato", new { id = pago.ContratoId });
         }
+
 
 
         // GET: Pagos/Delete/5
@@ -302,7 +374,7 @@ namespace Inmobiliaria.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("PorContrato", new { id = pago.ContratoId });
         }
 
         private bool PagoExists(int id)

@@ -1,52 +1,55 @@
 @model Pago
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Pago";
 }
 
-<h1>Editar</h1>
+<div class="container mt-4" style="max-width: 700px;">
+    <h2 class="mb-4">Editar Pago</h2>
 
-<h4>Pago</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="FechaPago" class="control-label"></label>
-                <input asp-for="FechaPago" class="form-control" />
-                <span asp-validation-for="FechaPago" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Importe" class="control-label"></label>
-                <input asp-for="Importe" class="form-control" />
-                <span asp-validation-for="Importe" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ContratoId" class="control-label"></label>
-                <select asp-for="ContratoId" class="form-control" asp-items="ViewBag.ContratoId"></select>
-                <span asp-validation-for="ContratoId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NumeroPeriodo" class="control-label"></label>
-                <input asp-for="NumeroPeriodo" class="form-control" />
-                <span asp-validation-for="NumeroPeriodo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Observaciones" class="control-label"></label>
-                <input asp-for="Observaciones" class="form-control" />
-                <span asp-validation-for="Observaciones" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label asp-for="FechaPago" class="form-label"></label>
+                    <input asp-for="FechaPago" class="form-control" />
+                    <span asp-validation-for="FechaPago" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Importe" class="form-label"></label>
+                    <input asp-for="Importe" class="form-control" />
+                    <span asp-validation-for="Importe" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ContratoId" class="form-label"></label>
+                    <select asp-for="ContratoId" class="form-select" asp-items="ViewBag.ContratoId"></select>
+                    <span asp-validation-for="ContratoId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NumeroPeriodo" class="form-label"></label>
+                    <input asp-for="NumeroPeriodo" class="form-control" />
+                    <span asp-validation-for="NumeroPeriodo" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Observaciones" class="form-label"></label>
+                    <textarea asp-for="Observaciones" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Observaciones" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a asp-action="PorContrato" asp-route-id="@Model?.ContratoId" class="btn btn-secondary">Volver</a>
+                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Volver</a>
 </div>
 
 @section Scripts {

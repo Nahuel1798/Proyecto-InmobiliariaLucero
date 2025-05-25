@@ -1,4 +1,4 @@
-@model IEnumerable<Pago>
+@model Paginador<Pago>
 
 @{
     ViewData["Title"] = "Index";
@@ -12,26 +12,17 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaPago)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Importe)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumeroPeriodo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Observaciones)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Contrato)
-            </th>
-            <th></th>
+            <th>Contrato</th>
+            <th>Inquilino</th>
+            <th>Dirección Inmueble</th>
+            <th>Fecha de Pago</th>
+            <th>Monto</th>
+            <th>Periodo</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Items) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.FechaPago)
@@ -57,3 +48,17 @@
 }
     </tbody>
 </table>
+
+<div class="text-center mt-3">
+    Página @Model.PaginaActual de @Model.TotalPaginas
+    <div>
+        @if (Model.HayAnterior)
+        {
+            <a class="btn btn-secondary" asp-action="Index" asp-route-pagina="@(Model.PaginaActual - 1)">Anterior</a>
+        }
+        @if (Model.HaySiguiente)
+        {
+            <a class="btn btn-secondary" asp-action="Index" asp-route-pagina="@(Model.PaginaActual + 1)">Siguiente</a>
+        }
+    </div>
+</div>

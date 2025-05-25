@@ -1,140 +1,152 @@
 @model Inmueble
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Crear Inmueble";
 }
 
 <h1>Crear Inmueble</h1>
 <hr />
-<div class="card">
+<div class="card shadow-sm">
+    <div class="card-body">
         <form asp-action="Create" method="post" class="row g-3">
             <!-- Buscar Propietario -->
-            <div class="form-group">
-                <label>Propietario</label>
+            <div class="mb-3 col-12">
+                <label for="PropietarioNombre" class="form-label">Propietario</label>
                 <div class="input-group">
                     <input type="hidden" name="PropietarioId" id="PropietarioId" />
-                    <input type="text" class="form-control mt-2" id="NombrePropietarioSeleccionado" readonly style="display:none;" />
                     <input type="text" class="form-control" id="PropietarioNombre" readonly placeholder="Seleccione un Propietario" />
-                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modalPropietario">Buscar</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalPropietario">
+                        Buscar
+                    </button>
                 </div>
                 <span asp-validation-for="PropietarioId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Uso" class="control-label"></label>
-                <select asp-for="Uso" class="form-control">
+
+            <div class="mb-3 col-md-6">
+                <label asp-for="Uso" class="form-label"></label>
+                <select asp-for="Uso" class="form-select">
                     <option value="">Seleccione un uso</option>
                     <option value="Residencial">Residencial</option>
                     <option value="Comercial">Comercial</option>
                 </select>
                 <span asp-validation-for="Uso" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Direccion" class="control-label"></label>
+
+            <div class="mb-3 col-md-6">
+                <label asp-for="Direccion" class="form-label"></label>
                 <input asp-for="Direccion" class="form-control" />
                 <span asp-validation-for="Direccion" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="TipoInmuebleId" class="control-label"></label>
+
+            <div class="mb-3 col-md-6">
+                <label asp-for="TipoInmuebleId" class="form-label"></label>
                 <select asp-for="TipoInmuebleId" class="form-select" asp-items="ViewBag.TipoInmuebleId">
-                    <option value="">Seleccione un tipo de mueble</option>
+                    <option value="">Seleccione un tipo de inmueble</option>
                 </select>
                 <span asp-validation-for="TipoInmuebleId" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Ambientes" class="control-label"></label>
-                <input asp-for="Ambientes" class="form-control" />
+            <div class="mb-3 col-md-6">
+                <label asp-for="Ambientes" class="form-label"></label>
+                <input asp-for="Ambientes" type="number" min="0" class="form-control" />
                 <span asp-validation-for="Ambientes" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Latitud" class="control-label"></label>
+
+            <div class="mb-3 col-md-6">
+                <label asp-for="Latitud" class="form-label"></label>
                 <input asp-for="Latitud" class="form-control" />
                 <span asp-validation-for="Latitud" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Longitud" class="control-label"></label>
+
+            <div class="mb-3 col-md-6">
+                <label asp-for="Longitud" class="form-label"></label>
                 <input asp-for="Longitud" class="form-control" />
                 <span asp-validation-for="Longitud" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Precio" class="control-label"></label>
-                <input asp-for="Precio" class="form-control" />
+
+            <div class="mb-3 col-md-6">
+                <label asp-for="Precio" class="form-label"></label>
+                <input asp-for="Precio" type="number" step="0.01" min="0" class="form-control" />
                 <span asp-validation-for="Precio" class="text-danger"></span>
             </div>
-            <div class="col-12">
+
+            <div class="col-12 d-flex gap-2 mt-4">
                 <button type="submit" class="btn btn-primary">Guardar</button>
                 <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
+    </div>
 </div>
 
 <!-- Modal Propietario -->
-<div class="modal fade" id="modalPropietario" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="modalPropietario" tabindex="-1" aria-labelledby="modalPropietarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title">Seleccionar Propietario</h5></div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalPropietarioLabel">Seleccionar Propietario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
             <div class="modal-body">
                 <!-- Buscador -->
-                <div class="mb-2 d-flex">
+                <div class="mb-3 d-flex">
                     <input type="text" id="busquedaPropietario" class="form-control me-2" placeholder="Buscar por nombre..." />
                     <button type="button" class="btn btn-primary" onclick="cargarPropietarios()">Buscar</button>
                 </div>
 
                 <!-- Tabla -->
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaPropietarios">
-                        <!-- Se llenará dinámicamente con JS -->
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaPropietarios">
+                            <!-- Se llenará dinámicamente con JS -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
-    function cargarPropietarios(nombre = null) {
-        const filtro = nombre ?? document.getElementById("busquedaPropietario").value;
-        fetch('/Propietario/Buscar?nombre=' + encodeURIComponent(filtro))
-            .then(res => res.json())
-            .then(data => {
-                const tbody = document.getElementById("tablaPropietarios");
-                tbody.innerHTML = "";
-                data.forEach(p => {
-                    const fila = document.createElement("tr");
-                    fila.innerHTML = `
-                        <td>${p.nombreCompleto}</td>
-                        <td>${p.email}</td>
-                        <td>
-                            <button type="button" class="btn btn-success btn-sm"
-                                    onclick="seleccionarPropietario('${p.id}', '${p.nombreCompleto}')">
-                                Seleccionar
-                            </button>
-                        </td>`;
-                    tbody.appendChild(fila);
+        function cargarPropietarios(nombre = null) {
+            const filtro = nombre ?? document.getElementById("busquedaPropietario").value;
+            fetch('/Propietario/Buscar?nombre=' + encodeURIComponent(filtro))
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById("tablaPropietarios");
+                    tbody.innerHTML = "";
+                    data.forEach(p => {
+                        const fila = document.createElement("tr");
+                        fila.innerHTML = `
+                            <td>${p.nombreCompleto}</td>
+                            <td>${p.email}</td>
+                            <td>
+                                <button type="button" class="btn btn-success btn-sm"
+                                        onclick="seleccionarPropietario('${p.id}', '${p.nombreCompleto}')">
+                                    Seleccionar
+                                </button>
+                            </td>`;
+                        tbody.appendChild(fila);
+                    });
                 });
-            });
-    }
+        }
 
-    function seleccionarPropietario(id, nombre) {
-        document.getElementById("PropietarioId").value = id;
-        document.getElementById("PropietarioNombre").value = nombre;
-        bootstrap.Modal.getInstance(document.getElementById("modalPropietario")).hide();
-    }
+        function seleccionarPropietario(id, nombre) {
+            document.getElementById("PropietarioId").value = id;
+            document.getElementById("PropietarioNombre").value = nombre;
+            bootstrap.Modal.getInstance(document.getElementById("modalPropietario")).hide();
+        }
 
-    document.getElementById("modalPropietario").addEventListener("show.bs.modal", function () {
-        cargarPropietarios();
-    });
-</script>
-
+        document.getElementById("modalPropietario").addEventListener("show.bs.modal", function () {
+            cargarPropietarios();
+        });
+    </script>
 }

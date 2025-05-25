@@ -1,51 +1,44 @@
 @model Pago
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Eliminar Pago";
 }
 
-<h1>Borrar</h1>
+<div class="container mt-4" style="max-width: 700px;">
+    <h2 class="text-danger mb-3">¿Estás seguro de que querés eliminar este pago?</h2>
 
-<h3>¿Estas seguro de Borrar esto?</del></h3>
-<div>
-    <h4>Pago</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaPago)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaPago)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Importe)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Importe)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumeroPeriodo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumeroPeriodo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Observaciones)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Observaciones)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Contrato)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Contrato.Id)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Detalles del Pago</h5>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.FechaPago)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.FechaPago)</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Importe)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.Importe)</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.NumeroPeriodo)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.NumeroPeriodo)</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Observaciones)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.Observaciones)</dd>
+
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Contrato)</dt>
+                <dd class="col-sm-8">Contrato N.º @Html.DisplayFor(model => model.Contrato.Id)</dd>
+            </dl>
+        </div>
+    </div>
+
+    <form asp-action="Delete" method="post">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Volver</a>
+        <div class="d-flex justify-content-between">
+            <a asp-action="PorContrato" asp-route-id="@Model?.ContratoId" class="btn btn-secondary">
+                Cancelar
+            </a>
+            <button type="submit" class="btn btn-danger">
+                Eliminar Pago
+            </button>
+        </div>
     </form>
 </div>

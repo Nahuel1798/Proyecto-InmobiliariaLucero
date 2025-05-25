@@ -31,7 +31,6 @@ public class Inmueble
     [Range(-180, 180)]
     public double Longitud { get; set; }
 
-    [Range(1, 99999999)]
     public decimal Precio { get; set; }
 
     [Display(Name = "¿Disponible?")]

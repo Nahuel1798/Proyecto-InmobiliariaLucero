@@ -21,23 +21,47 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Inmuebles
-        public async Task<IActionResult> Index()
+
+        public async Task<IActionResult> Index(string direccionInmueble,int pagina = 1, int tamañoPagina = 5)
         {
-            var inmobiliariaContext = _context.Inmuebles
+            var total = await _context.Inmuebles.CountAsync();
+
+            var items = await _context.Inmuebles
                 .Include(i => i.Propietario)
-                .Where(i => i.Estado == true); // Mostrar solo los activos
-            return View(await inmobiliariaContext.ToListAsync());
+                .Include(i => i.TipoInmueble)
+                .Where(i => i.Estado == true)
+                .OrderBy(i => i.Direccion)
+                .Skip((pagina - 1) * tamañoPagina)
+                .Take(tamañoPagina)
+                .ToListAsync();
+
+            if (!string.IsNullOrEmpty(direccionInmueble))
+            {
+                items = items.Where(i => i.Direccion.Contains(direccionInmueble)).ToList();
+            }
+
+            ViewBag.Direccion = direccionInmueble;
+
+            var modelo = new Paginador<Inmueble>(items, total, pagina, tamañoPagina);
+            return View(modelo);
         }
 
         [Authorize(Roles = "Administrador,Empleado")]
-        public async Task<IActionResult> Todos()
+
+        public async Task<IActionResult> Todos(int pagina = 1, int tamañoPagina = 5)
         {
-            var inmuebles = await _context.Inmuebles
+            var total = await _context.Inmuebles.CountAsync();
+
+            var items = await _context.Inmuebles
                 .Include(i => i.Propietario)
                 .Include(i => i.TipoInmueble)
+                .OrderBy(i => i.Direccion)
+                .Skip((pagina - 1) * tamañoPagina)
+                .Take(tamañoPagina)
                 .ToListAsync();
 
-            return View("Index", inmuebles);
+            var modelo = new Paginador<Inmueble>(items, total, pagina, tamañoPagina);
+            return View("Index", modelo);
         }
 
 

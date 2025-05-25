@@ -19,19 +19,16 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Contratos
-        public async Task<IActionResult> Index(DateTime? desde, DateTime? hasta, string direccionInmueble)
+        public async Task<IActionResult> Index(DateTime? desde, DateTime? hasta, string direccionInmueble, int pagina = 1, int tamañoPagina = 5)
         {
             var contratos = _context.Contratos
                 .Include(c => c.Inquilino)
-                .Include(c => c.Inmueble)
-                    .ThenInclude(i => i.Propietario)
+                .Include(c => c.Inmueble).ThenInclude(i => i.Propietario)
                 .AsQueryable();
 
-            // Buscar contratos cuya FechaInicio y FechaFin estén entre 'desde' y 'hasta'
             if (desde.HasValue && hasta.HasValue)
             {
-                contratos = contratos.Where(c =>
-                    c.FechaInicio >= desde.Value && c.FechaFin <= hasta.Value);
+                contratos = contratos.Where(c => c.FechaInicio >= desde.Value && c.FechaFin <= hasta.Value);
             }
             else if (desde.HasValue)
             {
@@ -47,11 +44,24 @@ namespace Inmobiliaria.Controllers
                 contratos = contratos.Where(c => c.Inmueble.Direccion.Contains(direccionInmueble));
             }
 
+            // Guardar filtros para que los inputs mantengan los valores
             ViewBag.Desde = desde?.ToString("yyyy-MM-dd");
             ViewBag.Hasta = hasta?.ToString("yyyy-MM-dd");
+            ViewBag.Direccion = direccionInmueble;
 
-            return View(await contratos.ToListAsync());
+            // Paginación
+            var total = await contratos.CountAsync();
+
+            var items = await contratos
+                .OrderByDescending(c => c.FechaInicio)
+                .Skip((pagina - 1) * tamañoPagina)
+                .Take(tamañoPagina)
+                .ToListAsync();
+
+            var modelo = new Paginador<Contrato>(items, total, pagina, tamañoPagina);
+            return View(modelo);
         }
+
 
         // GET: Contratos/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -62,9 +72,12 @@ namespace Inmobiliaria.Controllers
             }
 
             var contrato = await _context.Contratos
-                .Include(c => c.Inmueble)
                 .Include(c => c.Inquilino)
+                .Include(c => c.Inmueble)
+                .Include(c => c.UsuarioAlta)
+                .Include(c => c.UsuarioBaja)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (contrato == null)
             {
                 return NotFound();
@@ -73,11 +86,12 @@ namespace Inmobiliaria.Controllers
             return View(contrato);
         }
 
+
         // GET: Contratos/Create
         public IActionResult Create(string nombreInquilino = "", string direccionInmueble = "")
         {
             var inquilinos = _context.Inquilinos.AsQueryable();
-            var inmuebles = _context.Inmuebles.Where(i => i.Estado).AsQueryable(); // solo disponibles
+            var inmuebles = _context.Inmuebles.Where(i => i.Estado); // solo disponibles
 
             if (!string.IsNullOrWhiteSpace(nombreInquilino))
             {
@@ -97,72 +111,62 @@ namespace Inmobiliaria.Controllers
             return View();
         }
 
-
-
         // POST: Contratos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [Authorize(Roles = "Administrador,Empleado")]
-        public async Task<IActionResult> Create([Bind("Id,FechaInicio,FechaFin,MontoMensual,InquilinoId,InmuebleId,FechaTerminacionAnticipada")] Contrato contrato, string NombreCompleto, string Direccion)
+        public async Task<IActionResult> Create([Bind("Id,FechaInicio,FechaFin,InquilinoId,InmuebleId,FechaTerminacionAnticipada")] Contrato contrato)
         {
+            Console.WriteLine($"InquilinoId recibido: {contrato.InquilinoId}");
+            Console.WriteLine($"InmuebleId recibido: {contrato.InmuebleId}");
+
+            // Validación de superposición
             if (ExisteSuperposicionFechas(contrato.InmuebleId, contrato.FechaInicio, contrato.FechaFin))
             {
                 ModelState.AddModelError("", "El inmueble ya está alquilado en ese período.");
             }
 
-            if (contrato.FechaFin != contrato.FechaInicio.AddYears(1))
+            // Validación de duración mínima y máxima
+            var duracion = contrato.FechaFin - contrato.FechaInicio;
+            if (duracion.TotalDays < 30)
             {
-                ModelState.AddModelError("FechaFin", "La fecha de finalización debe ser exactamente un año después de la fecha de inicio.");
+                ModelState.AddModelError("FechaFin", "La duración mínima del contrato debe ser de 1 mes.");
             }
-
-            foreach (var modelState in ModelState.Values)
+            else if (duracion.TotalDays > 365 * 5)
             {
-                foreach (var error in modelState.Errors)
-                {
-                    Console.WriteLine(error.ErrorMessage);
-                }
+                ModelState.AddModelError("FechaFin", "La duración máxima del contrato es de 5 años.");
             }
 
             if (ModelState.IsValid)
             {
-                contrato.UsuarioAltaId = int.Parse(User.Claims.First(c => c.Type == "Id").Value);
-                contrato.UsuarioBajaId = null;
-
-                // Marcar el inmueble como no disponible
                 var inmueble = await _context.Inmuebles.FindAsync(contrato.InmuebleId);
-                if (inmueble != null)
+                if (inmueble == null)
                 {
+                    ModelState.AddModelError("", "El inmueble seleccionado no existe.");
+                }
+                else
+                {
+                    contrato.MontoMensual = inmueble.Precio;
                     inmueble.Estado = false;
                     _context.Update(inmueble);
+
+                    contrato.UsuarioAltaId = int.Parse(User.Claims.First(c => c.Type == "Id").Value);
+                    contrato.UsuarioBajaId = null;
+
+                    _context.Add(contrato);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(Index));
                 }
-
-                _context.Add(contrato);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
 
-            // Si falla, volver a cargar las listas filtradas
-            var inquilinos = _context.Inquilinos.AsQueryable();
-            var inmuebles = _context.Inmuebles.Where(i => i.Estado).AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(NombreCompleto))
-            {
-                inquilinos = inquilinos.Where(i => i.NombreCompleto.Contains(NombreCompleto));
-            }
-
-            if (!string.IsNullOrWhiteSpace(Direccion))
-            {
-                inmuebles = inmuebles.Where(i => i.Direccion.Contains(Direccion));
-            }
-
-            ViewBag.NombreBuscado = NombreCompleto;
-            ViewBag.DireccionBuscada = Direccion;
-            ViewBag.Inquilinos = inquilinos.ToList();
-            ViewBag.Inmuebles = inmuebles.ToList();
+            // Si hay errores, recargar las listas sin filtros o con filtros opcionales (si quieres)
+            ViewBag.Inquilinos = _context.Inquilinos.ToList();
+            ViewBag.Inmuebles = _context.Inmuebles.Where(i => i.Estado).ToList();
 
             return View(contrato);
         }
+
+
 
 
         // GET: Contratos/Edit/5
@@ -424,10 +428,13 @@ namespace Inmobiliaria.Controllers
 
         private bool ExisteSuperposicionFechas(int inmuebleId, DateTime inicio, DateTime fin)
         {
+            var startDate = inicio.Date;
+            var endDate = fin.Date;
+
             return _context.Contratos.Any(c =>
                 c.InmuebleId == inmuebleId &&
-                c.FechaFin >= inicio &&
-                c.FechaInicio <= fin &&
+                c.FechaFin.Date > startDate &&   // termina después de que empieza el nuevo contrato
+                c.FechaInicio.Date < endDate &&  // empieza antes de que termine el nuevo contrato
                 c.FechaTerminacionAnticipada == null);
         }
     }
