@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "Gj+UAGK5Rs5y3b9H7n5VR/D3klcJs9SsZDjd7x5znQc=",
+  "Hash": "2p+J63GssIfGy3VruNlYSsL908flAiaTkXp+SHZGbBQ=",
   "Source": "WebInmobiliaria",
   "BasePath": "_content/WebInmobiliaria",
   "Mode": "Default",
@@ -110,6 +110,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\img\\avatars\\avatar_1.png"
+    },
+    {
+      "Identity": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\img\\avatars\\avatar_2.png",
+      "SourceId": "WebInmobiliaria",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\",
+      "BasePath": "_content/WebInmobiliaria",
+      "RelativePath": "img/avatars/avatar_2.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\img\\avatars\\avatar_2.png"
     },
     {
       "Identity": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\img\\Fondo\\FondoInmobiliaria.jpg",

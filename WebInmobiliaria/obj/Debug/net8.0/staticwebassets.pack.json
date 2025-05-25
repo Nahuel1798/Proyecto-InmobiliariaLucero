@@ -37,6 +37,10 @@
       "PackagePath": "staticwebassets\\img\\avatars\\avatar_1.png"
     },
     {
+      "Id": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\img\\avatars\\avatar_2.png",
+      "PackagePath": "staticwebassets\\img\\avatars\\avatar_2.png"
+    },
+    {
       "Id": "D:\\Programacion\\Tercer año\\.Net\\Proyecto InmobiliariaLucero\\webinmobiliaria\\wwwroot\\js\\Contrato.js",
       "PackagePath": "staticwebassets\\js\\Contrato.js"
     },

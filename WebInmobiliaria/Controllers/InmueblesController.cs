@@ -240,23 +240,30 @@ namespace Inmobiliaria.Controllers
 
 
         [Authorize(Roles = "Administrador,Empleado")]
-        public async Task<IActionResult> PorPropietario(int id)
+        public async Task<IActionResult> PorPropietario(int id,int pagina = 1, int tamañoPagina = 5)
         {
             var propietario = await _context.Propietarios.FindAsync(id);
+            var total = await _context.Inmuebles.CountAsync();
             if (propietario == null)
             {
                 return NotFound();
             }
 
-            var inmuebles = await _context.Inmuebles
+            var items = await _context.Inmuebles
                 .Include(i => i.Propietario)
                 .Include(i => i.TipoInmueble)
                 .Where(i => i.PropietarioId == id)
+                .OrderBy(i => i.Direccion)
+                .Skip((pagina - 1) * tamañoPagina)
+                .Take(tamañoPagina)
                 .ToListAsync();
+                
 
             ViewBag.Propietario = propietario;
-            return View(inmuebles);
+            var modelo = new Paginador<Inmueble>(items, total, pagina, tamañoPagina);
+            return View(modelo);
         }
+
 
         [Authorize(Roles = "Administrador,Empleado")]
         public IActionResult InmueblesDisponibles(DateTime fechaInicio, DateTime fechaFin)
