@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Inmobiliaria.Controllers
 {
@@ -18,6 +19,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Inquilinos
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Index(string nombreInquilino, int pagina = 1, int tamañoPagina = 5)
         {
             var total = await _context.Inquilinos.CountAsync();
@@ -41,6 +43,7 @@ namespace Inmobiliaria.Controllers
 
 
         // GET: Inquilinos/Details/5
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -59,6 +62,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Inquilinos/Create
+        [Authorize(Roles = "Administrador,Empleado")]
         public IActionResult Create()
         {
             return View();
@@ -68,6 +72,7 @@ namespace Inmobiliaria.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Administrador,Empleado")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Dni,NombreCompleto,Telefono,Email")] Inquilino inquilino)
         {
@@ -81,6 +86,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Inquilinos/Edit/5
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -100,6 +106,7 @@ namespace Inmobiliaria.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Administrador,Empleado")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Dni,NombreCompleto,Telefono,Email")] Inquilino inquilino)
         {
@@ -132,6 +139,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Inquilinos/Delete/5
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -151,6 +159,7 @@ namespace Inmobiliaria.Controllers
 
         // POST: Inquilinos/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Administrador,Empleado")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

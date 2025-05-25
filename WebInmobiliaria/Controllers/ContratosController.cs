@@ -19,6 +19,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Contratos
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Index(DateTime? desde, DateTime? hasta, string direccionInmueble, int pagina = 1, int tamañoPagina = 5)
         {
             var contratos = _context.Contratos
@@ -64,6 +65,7 @@ namespace Inmobiliaria.Controllers
 
 
         // GET: Contratos/Details/5
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -88,6 +90,7 @@ namespace Inmobiliaria.Controllers
 
 
         // GET: Contratos/Create
+        [Authorize(Roles = "Administrador,Empleado")]
         public IActionResult Create(string nombreInquilino = "", string direccionInmueble = "")
         {
             var inquilinos = _context.Inquilinos.AsQueryable();
@@ -170,6 +173,7 @@ namespace Inmobiliaria.Controllers
 
 
         // GET: Contratos/Edit/5
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -191,6 +195,7 @@ namespace Inmobiliaria.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Administrador,Empleado")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FechaInicio,FechaFin,MontoMensual,InquilinoId,InmuebleId,FechaTerminacionAnticipada")] Contrato contrato)
         {
@@ -227,6 +232,7 @@ namespace Inmobiliaria.Controllers
 
         //GET:  Contratos/Vigentes
         [Authorize]
+        [Authorize(Roles = "Administrador,Empleado")]
         public IActionResult Renovar(int id)
         {
             var original = _context.Contratos
@@ -254,7 +260,7 @@ namespace Inmobiliaria.Controllers
 
         //POST:  Contratos/Vigentes
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Renovar(Contrato contrato)
         {
             if (ModelState.IsValid)
@@ -387,6 +393,7 @@ namespace Inmobiliaria.Controllers
 
 
         // GET: Contratos/Delete/5
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -408,6 +415,7 @@ namespace Inmobiliaria.Controllers
 
         // POST: Contratos/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Administrador,Empleado")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

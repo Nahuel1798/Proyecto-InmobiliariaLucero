@@ -19,6 +19,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Pagos
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Index(int pagina = 1, int tamañoPagina = 10)
         {
             var pagos = _context.Pagos
@@ -41,6 +42,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Pagos/Details/5
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -67,6 +69,7 @@ namespace Inmobiliaria.Controllers
 
 
         // GET: Pagos/Create
+        [Authorize(Roles = "Administrador,Empleado")]
         public IActionResult Create()
         {
             ViewData["ContratoId"] = _context.Contratos
@@ -85,7 +88,7 @@ namespace Inmobiliaria.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Create([Bind("Id,FechaPago,Importe,ContratoId,NumeroPeriodo,Observaciones")] Pago pago)
         {
             if (ModelState.IsValid)
@@ -117,6 +120,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Pagos/Edit/5
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -145,6 +149,7 @@ namespace Inmobiliaria.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Administrador,Empleado")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FechaPago,Importe,ContratoId,NumeroPeriodo,Observaciones")] Pago pago)
         {
@@ -189,8 +194,9 @@ namespace Inmobiliaria.Controllers
             return View(pago);  // Mostrar la vista Edit para corregir errores
         }
 
-        
+
         //Listar pagos realizados
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> PorContrato(int id, int pagina = 1, int tamañoPagina = 10)
         {
             var contrato = await _context.Contratos
@@ -242,6 +248,7 @@ namespace Inmobiliaria.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> CrearDesdeContrato(Pago pago)
         {
             // Obtener contrato
@@ -344,6 +351,7 @@ namespace Inmobiliaria.Controllers
 
 
         // GET: Pagos/Delete/5
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -364,6 +372,7 @@ namespace Inmobiliaria.Controllers
 
         // POST: Pagos/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Administrador,Empleado")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

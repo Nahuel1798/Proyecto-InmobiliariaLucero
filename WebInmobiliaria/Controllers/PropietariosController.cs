@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Inmobiliaria.Controllers
 {
@@ -18,6 +19,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Propietarios
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Index(string nombrePropietario, int pagina = 1, int tamañoPagina = 5)
         {
             var total = await _context.Propietarios.CountAsync();
@@ -41,6 +43,7 @@ namespace Inmobiliaria.Controllers
 
 
         // GET: Propietarios/Details/5
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -59,6 +62,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Propietarios/Create
+        [Authorize(Roles = "Administrador,Empleado")]
         public IActionResult Create()
         {
             return View();
@@ -68,7 +72,7 @@ namespace Inmobiliaria.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Create([Bind("Id,Dni,Apellido,Nombre,Telefono,Email")] Propietario propietario)
         {
             if (ModelState.IsValid)
@@ -100,7 +104,7 @@ namespace Inmobiliaria.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Dni,Apellido,Nombre,Telefono,Email")] Propietario propietario)
         {
             if (id != propietario.Id)
@@ -132,12 +136,14 @@ namespace Inmobiliaria.Controllers
         }
 
         [HttpGet("Propietario/Buscar")]
+        [Authorize(Roles = "Administrador,Empleado")]
         public JsonResult Buscar(string nombre = "")
         {
             var propietarios = _context.Propietarios
                 .Where(p => string.IsNullOrEmpty(nombre) ||
                             (p.Nombre + " " + p.Apellido).ToLower().Contains(nombre.ToLower()))
-                .Select(p => new {
+                .Select(p => new
+                {
                     id = p.Id,
                     nombreCompleto = p.Nombre + " " + p.Apellido,
                     email = p.Email
@@ -146,9 +152,10 @@ namespace Inmobiliaria.Controllers
             return Json(propietarios);
         }
 
-        
+
 
         // GET: Propietarios/Delete/5
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -167,6 +174,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // POST: Propietarios/Delete/5
+        [Authorize(Roles = "Administrador,Empleado")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

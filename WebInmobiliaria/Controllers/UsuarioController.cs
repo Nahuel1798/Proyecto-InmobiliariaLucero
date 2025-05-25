@@ -182,7 +182,7 @@ public class UsuariosController : Controller
     // PERFIL USUARIO (LOGUEADO)
     // ==============================
 
-    [Authorize]
+    [Authorize(Roles = "Administrador,Empleado")]
     public IActionResult Perfil()
     {
         int id = int.Parse(User.Claims.First(c => c.Type == "Id").Value);
@@ -192,7 +192,7 @@ public class UsuariosController : Controller
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = "Administrador,Empleado")]
     public async Task<IActionResult> Perfil(Usuario actualizado, IFormFile? avatarNuevo, string? nuevaClave)
     {
         int id = int.Parse(User.Claims.First(c => c.Type == "Id").Value);
@@ -236,7 +236,7 @@ public class UsuariosController : Controller
         return RedirectToAction(nameof(Perfil));
     }
 
-    [Authorize]
+    [Authorize(Roles = "Administrador,Empleado")]
     public async Task<IActionResult> QuitarAvatar()
     {
         int id = int.Parse(User.Claims.First(c => c.Type == "Id").Value);

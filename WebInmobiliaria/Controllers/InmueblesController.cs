@@ -21,7 +21,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Inmuebles
-
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Index(string direccionInmueble,int pagina = 1, int tamañoPagina = 5)
         {
             var total = await _context.Inmuebles.CountAsync();
@@ -67,6 +67,7 @@ namespace Inmobiliaria.Controllers
 
 
         // GET: Inmuebles/Details/5
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -86,7 +87,8 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Inmuebles/Create
-        public IActionResult Create(string nombrePropietario="")
+        [Authorize(Roles = "Administrador,Empleado")]
+        public IActionResult Create(string nombrePropietario = "")
         {
             var propietarios = _context.Propietarios.AsQueryable();
             if (!string.IsNullOrEmpty(nombrePropietario))
@@ -112,6 +114,7 @@ namespace Inmobiliaria.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Administrador,Empleado")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Direccion,Uso,TipoInmuebleId,Ambientes,Latitud,Longitud,Precio,Estado,PropietarioId")] Inmueble inmueble,string nombrePropietario="")
         {
@@ -143,6 +146,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Inmuebles/Edit/5
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -181,6 +185,7 @@ namespace Inmobiliaria.Controllers
 
         // POST: Inmuebles/Edit/5
         [HttpPost]
+        [Authorize(Roles = "Administrador,Empleado")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Direccion,Uso,TipoInmuebleId,Ambientes,Latitud,Longitud,Precio,Estado,PropietarioId")] Inmueble inmueble)
         {
@@ -234,7 +239,7 @@ namespace Inmobiliaria.Controllers
         }
 
 
-
+        [Authorize(Roles = "Administrador,Empleado")]
         public async Task<IActionResult> PorPropietario(int id)
         {
             var propietario = await _context.Propietarios.FindAsync(id);
@@ -253,6 +258,7 @@ namespace Inmobiliaria.Controllers
             return View(inmuebles);
         }
 
+        [Authorize(Roles = "Administrador,Empleado")]
         public IActionResult InmueblesDisponibles(DateTime fechaInicio, DateTime fechaFin)
         {
             var disponibles = _context.Inmuebles
@@ -267,7 +273,7 @@ namespace Inmobiliaria.Controllers
 
 
 
-        [Authorize]
+        [Authorize(Roles = "Administrador,Empleado")]
         // GET: Inmuebles/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -288,6 +294,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // POST: Inmuebles/Delete/5
+        [Authorize(Roles = "Administrador,Empleado")]
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
